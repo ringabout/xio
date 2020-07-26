@@ -1,2 +1,2 @@
 # Xio
-experimental async syntax for Nim.
+Experimental IO engine and event loop for Nim.

@@ -1,8 +1,8 @@
 # Package
 
 version       = "0.1.0"
-author        = "flywind"
-description   = "Async for Nim."
+author        = "Zeshen Xing"
+description   = "Experimental IO engine and event loop for Nim."
 license       = "Apache-2.0"
 srcDir        = "src"
 

@@ -72,9 +72,20 @@ const
 proc createIoCompletionPort*(
   FileHandle: Handle, 
   ExistingCompletionPort: Handle,
-  CompletionKey: ULONG_PTR, NumberOfConcurrentThreads: DWORD
+  CompletionKey: ULONG_PTR, 
+  NumberOfConcurrentThreads: DWORD
 ): Handle {.libKernel32, importc: "CreateIoCompletionPort"}
   ## Creates an input/output (I/O) completion port and associates it with a specified file handle.
+  ## Or creates an input/output (I/O) completion port which is not yet associated with file handles.
+  ## Params: 
+  ##         - ``FileHandle``: An open file handle or INVALID_HANDLE_VALUE.
+  ##         - ``ExistingCompletionPort``: A handle to an existing I/O completion port or NULL.
+  ##         - ``CompletionKey``: User-defined completion key.
+  ##         - ``NumberOfConcurrentThreads``
+  ## Returns:
+  ##         - ``Handle``
+
+ 
 
 proc getQueuedCompletionStatus*(CompletionPort: Handle,
   lpNumberOfBytesTransferred: LPDWORD,
