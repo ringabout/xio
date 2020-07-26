@@ -10,7 +10,7 @@ type
   LPINT* = ptr int32
   ULONG* = int32
   ULONG_PTR* = uint
-  PULONG* = ptr ULong
+  PULONG* = ptr ULONG
   PULONG_PTR* = ptr uint
   HDC* = Handle
   HGLRC* = Handle
@@ -36,10 +36,10 @@ type
   LPOVERLAPPED* = ptr OVERLAPPED
 
   OVERLAPPED_ENTRY* = object
-    lpCompletionKey: ULONG_PTR
-    lpOverlapped: LPOVERLAPPED
-    internal: ULONG_PTR
-    dwNumberOfBytesTransferred: DWORD
+    lpCompletionKey*: ULONG_PTR
+    lpOverlapped*: LPOVERLAPPED
+    internal*: ULONG_PTR
+    dwNumberOfBytesTransferred*: DWORD
 
   LPOVERLAPPED_ENTRY* = ptr OVERLAPPED_ENTRY
 
@@ -93,6 +93,10 @@ proc getQueuedCompletionStatusEx*(CompletionPort: Handle,
 
 proc closeHandle*(hObject: Handle): WINBOOL {.libKernel32,
     importc: "CloseHandle".}
+
+proc getLastError*(): DWORD {.libKernel32, importc: "GetLastError".}
+
+proc setLastError*(dwErrCode: DWORD) {.libKernel32, importc: "SetLastError".}
 
 proc WSAIoctl*(s: SocketHandle; dwIoControlCode: DWORD; lpvInBuffer: LPVOID;
   cbInBuffer: DWORD; lpvOutBuffer: LPVOID; cbOutBuffer: DWORD;
