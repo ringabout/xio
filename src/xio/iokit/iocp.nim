@@ -10,6 +10,7 @@ type
   LPINT* = ptr int32
   ULONG* = int32
   ULONG_PTR* = uint
+  PULONG* = ptr ULong
   PULONG_PTR* = ptr uint
   HDC* = Handle
   HGLRC* = Handle
@@ -34,6 +35,13 @@ type
 
   LPOVERLAPPED* = ptr OVERLAPPED
 
+  OVERLAPPED_ENTRY* = object
+    lpCompletionKey: ULONG_PTR
+    lpOverlapped: LPOVERLAPPED
+    internal: ULONG_PTR
+    dwNumberOfBytesTransferred: DWORD
+
+  LPOVERLAPPED_ENTRY* = ptr OVERLAPPED_ENTRY
 
   WSAOVERLAPPED* = object
     internal*: ULONG_PTR
@@ -45,7 +53,7 @@ type
   LPWSAOVERLAPPED* = ptr WSAOVERLAPPED
 
   LPWSAOVERLAPPED_COMPLETION_ROUTINE* = proc (dwError: DWORD, cbTransferred: DWORD, 
-                                             lpOverlapped: LPWSAOVERLAPPED, dwFlags: DWORD)
+                                              lpOverlapped: LPWSAOVERLAPPED, dwFlags: DWORD)
 
   WSABUF* = object
     len*: ULONG
@@ -57,9 +65,13 @@ type
 
 
 const
-  INVALID_HANDLE_VALUE = -1
+  INVALID_HANDLE_VALUE* = Handle(-1)
+  WSA_IO_PENDING* = 997'i32
+  INFINITE* = -1'i32
 
-proc createIoCompletionPort*(FileHandle: Handle, ExistingCompletionPort: Handle,
+proc createIoCompletionPort*(
+  FileHandle: Handle, 
+  ExistingCompletionPort: Handle,
   CompletionKey: ULONG_PTR, NumberOfConcurrentThreads: DWORD
 ): Handle {.libKernel32, importc: "CreateIoCompletionPort"}
   ## Creates an input/output (I/O) completion port and associates it with a specified file handle.
@@ -70,6 +82,14 @@ proc getQueuedCompletionStatus*(CompletionPort: Handle,
   lpOverlapped: LPOVERLAPPED,
   dwMilliseconds: DWORD
 ): WinBool {.libKernel32, importc: "GetQueuedCompletionStatus"}
+
+proc getQueuedCompletionStatusEx*(CompletionPort: Handle,
+  lpCompletionPortEntries: LPOVERLAPPED_ENTRY,
+  ulCount: ULONG,
+  ulNumEntriesRemoved: PULONG,
+  dwMilliseconds: DWORD,
+  fAlertable: WINBOOL
+): WinBool {.libKernel32, importc: "GetQueuedCompletionStatusEx".}
 
 proc closeHandle*(hObject: Handle): WINBOOL {.libKernel32,
     importc: "CloseHandle".}
