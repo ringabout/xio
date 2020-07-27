@@ -84,17 +84,22 @@ proc createIoCompletionPort*(
   ##         - ``NumberOfConcurrentThreads``
   ## Returns:
   ##         - ``Handle``
+  ## .. code-block:: Nim
+  ##   # creates an input/output (I/O) completion port
+  ##   discard createIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 1)
 
  
 
-proc getQueuedCompletionStatus*(CompletionPort: Handle,
+proc getQueuedCompletionStatus*(
+  CompletionPort: Handle,
   lpNumberOfBytesTransferred: LPDWORD,
   lpCompletionKey: PULONG_PTR,
   lpOverlapped: LPOVERLAPPED,
   dwMilliseconds: DWORD
 ): WinBool {.libKernel32, importc: "GetQueuedCompletionStatus"}
 
-proc getQueuedCompletionStatusEx*(CompletionPort: Handle,
+proc getQueuedCompletionStatusEx*(
+  CompletionPort: Handle,
   lpCompletionPortEntries: LPOVERLAPPED_ENTRY,
   ulCount: ULONG,
   ulNumEntriesRemoved: PULONG,
@@ -109,9 +114,11 @@ proc getLastError*(): DWORD {.libKernel32, importc: "GetLastError".}
 
 proc setLastError*(dwErrCode: DWORD) {.libKernel32, importc: "SetLastError".}
 
-proc WSAIoctl*(s: SocketHandle; dwIoControlCode: DWORD; lpvInBuffer: LPVOID;
-  cbInBuffer: DWORD; lpvOutBuffer: LPVOID; cbOutBuffer: DWORD;
-  lpcbBytesReturned: LPDWORD; lpOverlapped: LPOVERLAPPED;
+proc WSAIoctl*(
+  s: SocketHandle, 
+  dwIoControlCode: DWORD, lpvInBuffer: LPVOID,
+  cbInBuffer: DWORD, lpvOutBuffer: LPVOID, cbOutBuffer: DWORD,
+  lpcbBytesReturned: LPDWORD, lpOverlapped: LPOVERLAPPED,
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSAIoctl".}
 
