@@ -70,11 +70,3 @@ type
     buf*: cstring
 
   LPWSABUF* = ptr WSABUF
-
-  SocketHandle* = distinct int
-
-
-const
-  INVALID_HANDLE_VALUE* = Handle(-1)
-  WSA_IO_PENDING* = 997'i32
-  INFINITE* = -1'i32
