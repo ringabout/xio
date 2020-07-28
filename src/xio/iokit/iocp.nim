@@ -1,73 +1,10 @@
 {.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}
-{.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
 
 
-type
-  Handle* = int
-  DWORD* = int32
-  PDWORD* = ptr DWORD
-  LPDWORD* = ptr DWORD
-  LPINT* = ptr int32
-  ULONG* = int32
-  ULONG_PTR* = uint
-  PULONG* = ptr ULONG
-  PULONG_PTR* = ptr uint
-  HDC* = Handle
-  HGLRC* = Handle
-  PVOID* = pointer
-  LPVOID* = pointer
+import iocp / [types, winsock2]
 
-  WINBOOL = int32 ## if WINBOOL != 0, it succeeds which is different from posix.
+export types, winsock2
 
-  OVERLAPPED_offset* = object
-    offset*: DWORD
-    offsetHigh*: DWORD
-
-  OVERLAPPED_union* {.union.} = object
-    offset*: OVERLAPPED_offset
-    p*: PVOID
-
-  OVERLAPPED* = object
-    internal*: ULONG_PTR
-    internalHigh*: ULONG_PTR
-    union*: OVERLAPPED_union
-    hevent*: Handle
-
-  LPOVERLAPPED* = ptr OVERLAPPED
-
-  OVERLAPPED_ENTRY* = object
-    lpCompletionKey*: ULONG_PTR
-    lpOverlapped*: LPOVERLAPPED
-    internal*: ULONG_PTR
-    dwNumberOfBytesTransferred*: DWORD
-
-  LPOVERLAPPED_ENTRY* = ptr OVERLAPPED_ENTRY
-
-  WSAOVERLAPPED* = object
-    internal*: ULONG_PTR
-    internalHigh*: ULONG_PTR
-    offset*: DWORD
-    offsetHigh*: DWORD
-    hevent*: Handle
-
-  LPWSAOVERLAPPED* = ptr WSAOVERLAPPED
-
-  LPWSAOVERLAPPED_COMPLETION_ROUTINE* = proc (dwError: DWORD, cbTransferred: DWORD, 
-                                              lpOverlapped: LPWSAOVERLAPPED, dwFlags: DWORD)
-
-  WSABUF* = object
-    len*: ULONG
-    buf*: cstring
-
-  LPWSABUF* = ptr WSABUF
-
-  SocketHandle* = distinct int
-
-
-const
-  INVALID_HANDLE_VALUE* = Handle(-1)
-  WSA_IO_PENDING* = 997'i32
-  INFINITE* = -1'i32
 
 proc createIoCompletionPort*(
   FileHandle: Handle, 
@@ -88,8 +25,6 @@ proc createIoCompletionPort*(
   ##   # creates an input/output (I/O) completion port
   ##   discard createIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 1)
 
- 
-
 proc getQueuedCompletionStatus*(
   CompletionPort: Handle,
   lpNumberOfBytesTransferred: LPDWORD,
@@ -97,6 +32,7 @@ proc getQueuedCompletionStatus*(
   lpOverlapped: LPOVERLAPPED,
   dwMilliseconds: DWORD
 ): WinBool {.libKernel32, importc: "GetQueuedCompletionStatus"}
+  ## Gets one completion port entry.
 
 proc getQueuedCompletionStatusEx*(
   CompletionPort: Handle,
@@ -106,6 +42,7 @@ proc getQueuedCompletionStatusEx*(
   dwMilliseconds: DWORD,
   fAlertable: WINBOOL
 ): WinBool {.libKernel32, importc: "GetQueuedCompletionStatusEx".}
+  ## Gets multiple completion port entries simultaneously.
 
 proc closeHandle*(hObject: Handle): WINBOOL {.libKernel32,
     importc: "CloseHandle".}
@@ -114,25 +51,6 @@ proc getLastError*(): DWORD {.libKernel32, importc: "GetLastError".}
 
 proc setLastError*(dwErrCode: DWORD) {.libKernel32, importc: "SetLastError".}
 
-proc WSAIoctl*(
-  s: SocketHandle, 
-  dwIoControlCode: DWORD, lpvInBuffer: LPVOID,
-  cbInBuffer: DWORD, lpvOutBuffer: LPVOID, cbOutBuffer: DWORD,
-  lpcbBytesReturned: LPDWORD, lpOverlapped: LPOVERLAPPED,
-  lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
-): cint {.libWs2_32, importc: "WSAIoctl".}
-
-proc WSARecv*(
-  s: SocketHandle,
-  lpBuffers: LPWSABUF,
-  dwBufferCount: DWORD,
-  lpNumberOfBytesRecvd: LPDWORD,
-  lpFlags: LPDWORD,
-  lpOverlapped: LPWSAOVERLAPPED,
-  lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
-): cint {.libWs2_32, importc: "WSARecv".}
-
-proc WSAGetLastError*(): cint {.libWs2_32, importc: "WSAGetLastError".}
 
 when isMainModule:
   echo createIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 1)
