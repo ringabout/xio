@@ -7,6 +7,6 @@ type
 
   SockaddrIn* = object
     sinFamily*: cshort
-    sinPort*: cshort
+    sinPort*: uushort
     sinAddr*: InAddr
     sinZero*: array[8, cchar]

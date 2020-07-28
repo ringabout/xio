@@ -1,5 +1,5 @@
 type
-  uuchar* = cchar
+  uuchar* = cuchar
   uushort* = cushort
   uuint* = cuint
   uulong* = culong

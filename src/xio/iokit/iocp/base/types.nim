@@ -1,6 +1,6 @@
 type
   POINTER_64_INT* = uint
-  INT8* = cchar
+  INT8* = cschar
   PINT8* = ptr INT8
   INT16* = cshort
   PINT16* = ptr INT16
