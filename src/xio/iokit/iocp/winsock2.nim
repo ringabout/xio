@@ -1,5 +1,5 @@
 import types, wsadata, guiddef, winnt
-import base/ws2types
+import base / [ws2types, basetypes]
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
@@ -10,7 +10,7 @@ const
   WSAPROTOCOL_LEN = 255
 
 type
-  SocketHandle* = distinct int
+  SocketHandle* = UINT_PTR
 
   GROUP = uint32
 
