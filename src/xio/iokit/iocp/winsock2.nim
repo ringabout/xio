@@ -25,7 +25,7 @@ type
     dwServiceFlags3*: DWORD
     dwServiceFlags4*: DWORD
     dwProviderFlags*: DWORD
-    providerId*: GUid
+    providerId*: GUID
     dwCatalogEntryId*: DWORD
     protocolChain*: WSAPROTOCOLCHAIN
     iVersion*: int32
@@ -45,11 +45,10 @@ type
 
 
 const
-  INVALID_HANDLE_VALUE* = Handle(-1)
+  INVALID_HANDLE_VALUE* = cast[Handle](-1)
   WSA_IO_PENDING* = 997'i32
   INFINITE* = -1'i32
   SOCKET_ERROR* = -1'i32
-
 
   AF_UNSPEC* = 0
   AF_UNIX* = 1

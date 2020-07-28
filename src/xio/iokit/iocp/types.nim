@@ -1,29 +1,29 @@
 type
-  BYTE* = char
-  WORD* = uint8
-  DWORD* = int32
-  FLOAT* = float
+  BYTE* = cuchar
+  WORD* = cushort
+  DWORD* = culong
+  FLOAT* = cfloat
   PFLOAT* = ptr FLOAT
   PBYTE* = ptr BYTE
   LPBYTE* = ptr BYTE
-  PINT* = ptr int
-  LPINT* = ptr int
+  PINT* = ptr cint
+  LPINT* = ptr cint
   PWORD* = ptr WORD
   LPWORD* = ptr WORD
   LPLONG* = ptr DWORD # __LONG32
   PDWORD* = ptr DWORD
   LPDWORD* = ptr DWORD
-  ULONG* = int32
-  ULONG_PTR* = uint
+  ULONG* = culong
+  ULONG_PTR* = culong
   DWORD_PTR* = ULONG_PTR
   PDWORD_PTR* = ptr ULONG_PTR
   PULONG* = ptr ULONG
-  PULONG_PTR* = ptr uint
+  PULONG_PTR* = ptr ULONG_PTR
 
   PVOID* = pointer
   LPVOID* = pointer
 
-  Handle* = int
+  Handle* = pointer
   HDC* = Handle
   HGLRC* = Handle
 

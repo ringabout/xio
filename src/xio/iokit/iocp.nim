@@ -7,10 +7,10 @@ export types, winsock2
 
 
 proc createIoCompletionPort*(
-  FileHandle: Handle, 
-  ExistingCompletionPort: Handle,
-  CompletionKey: ULONG_PTR, 
-  NumberOfConcurrentThreads: DWORD
+  fileHandle: Handle, 
+  existingCompletionPort: Handle,
+  completionKey: ULONG_PTR, 
+  numberOfConcurrentThreads: DWORD
 ): Handle {.libKernel32, importc: "CreateIoCompletionPort"}
   ## Creates an input/output (I/O) completion port and associates it with a specified file handle.
   ## Or creates an input/output (I/O) completion port which is not yet associated with file handles.
@@ -26,7 +26,7 @@ proc createIoCompletionPort*(
   ##   discard createIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 1)
 
 proc getQueuedCompletionStatus*(
-  CompletionPort: Handle,
+  completionPort: Handle,
   lpNumberOfBytesTransferred: var DWORD,
   lpCompletionKey: var ULONG_PTR,
   lpOverlapped: var OVERLAPPED,
@@ -35,7 +35,7 @@ proc getQueuedCompletionStatus*(
   ## Gets one completion port entry.
 
 proc getQueuedCompletionStatusEx*(
-  CompletionPort: Handle,
+  completionPort: Handle,
   lpCompletionPortEntries: var OVERLAPPED_ENTRY,
   ulCount: ULONG,
   ulNumEntriesRemoved: var ULONG,
@@ -53,4 +53,4 @@ proc setLastError*(dwErrCode: DWORD) {.libKernel32, importc: "SetLastError".}
 
 
 when isMainModule:
-  echo createIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 1)
+  echo cast[int](createIoCompletionPort(INVALID_HANDLE_VALUE, cast[Handle](0), 0, 1))
