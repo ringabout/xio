@@ -12,8 +12,8 @@ type
     wVersion*: WORD
     wHighVersion*: WORD
 
-    iMaxSockets*: uint8
-    iMaxUdpDg*: uint8
+    iMaxSockets*: cushort
+    iMaxUdpDg*: cushort
     lpVendorInfo*: cstring
     szDescription*: array[WSADESCRIPTION_LEN+1, char]
     szSystemStatus*: array[WSASYS_STATUS_LEN+1, char]

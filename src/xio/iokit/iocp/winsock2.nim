@@ -1,4 +1,5 @@
 import types, wsadata, guiddef, winnt
+import base/ws2types
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
@@ -42,6 +43,13 @@ type
     szProtocol*: array[WSAPROTOCOL_LEN + 1, WChar]
   
   LPWSAPROTOCOL_INFOW* = ptr WSAPROTOCOL_INFOW
+
+  QOS* = object
+    SendingFlowspec: FLOWSPEC
+    ReceivingFlowspec: FLOWSPEC
+    ProviderSpecific: WSABUF
+
+  LPQOS* = ptr QOS
 
 
 const
@@ -98,6 +106,15 @@ proc WSASocket*(
   g: GROUP,
   dwFlags: DWORD
 ): SocketHandle {.libWs2_32, importc: "WSASocketW".}
+
+proc WSAConnect*(
+  s: SocketHandle,
+  name: var SockAddr,
+  namelen: cint,
+  lpCallerData: LPWSABUF,
+  lpCalleeData: LPWSABUF,
+  lpSQOS: LPQOS, 
+  lpGQOS: LPQOS): cint {.libWs2_32, importc: "WSAConnect".}
 
 proc WSAIoctl*(
   s: SocketHandle, 
