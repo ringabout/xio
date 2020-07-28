@@ -27,21 +27,21 @@ proc createIoCompletionPort*(
 
 proc getQueuedCompletionStatus*(
   CompletionPort: Handle,
-  lpNumberOfBytesTransferred: LPDWORD,
-  lpCompletionKey: PULONG_PTR,
-  lpOverlapped: LPOVERLAPPED,
+  lpNumberOfBytesTransferred: var DWORD,
+  lpCompletionKey: var ULONG_PTR,
+  lpOverlapped: var OVERLAPPED,
   dwMilliseconds: DWORD
-): WinBool {.libKernel32, importc: "GetQueuedCompletionStatus"}
+): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatus"}
   ## Gets one completion port entry.
 
 proc getQueuedCompletionStatusEx*(
   CompletionPort: Handle,
-  lpCompletionPortEntries: LPOVERLAPPED_ENTRY,
+  lpCompletionPortEntries: var OVERLAPPED_ENTRY,
   ulCount: ULONG,
-  ulNumEntriesRemoved: PULONG,
+  ulNumEntriesRemoved: var ULONG,
   dwMilliseconds: DWORD,
   fAlertable: WINBOOL
-): WinBool {.libKernel32, importc: "GetQueuedCompletionStatusEx".}
+): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatusEx".}
   ## Gets multiple completion port entries simultaneously.
 
 proc closeHandle*(hObject: Handle): WINBOOL {.libKernel32,

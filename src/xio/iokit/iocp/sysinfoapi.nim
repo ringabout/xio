@@ -9,11 +9,11 @@ type
     wProcessorArchitecture*: WORD
     wReserved*: WORD
 
-  SYSTEM_INFO_UNION1* {.union.} = object
+  SYSTEM_INFO_UNION1* {.union, pure, final.} = object
     dwOemId*: DWORD
     s1*: SYSTEM_INFO_UNION1_STRUCT1
 
-  SYSTEM_INFO* = object
+  SYSTEM_INFO* {.pure, final.} = object
     u1*: SYSTEM_INFO_UNION1
     dwPageSize*: DWORD
     lpMinimumApplicationAddress*: LPVOID
@@ -28,4 +28,11 @@ type
   LPSYSTEM_INFO* = ptr SYSTEM_INFO
 
 
-proc getSystemInfo*(lpSystemInfo: LPSYSTEM_INFO) {.libKernel32, importc: "GetSystemInfo".}
+proc getSystemInfo*(lpSystemInfo: var SYSTEM_INFO) {.libKernel32, importc: "GetSystemInfo".}
+
+
+when isMainModule:
+  # Error: var info = SYSTEM_INFO()
+  var info: SYSTEM_INFO
+  getSystemInfo(info)
+  echo info
