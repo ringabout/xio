@@ -91,6 +91,10 @@ const
   AF_MAX* = 33
 
 
+proc closeSocket*(s: SocketHandle): cint {.libWs2_32, importc: "closesocket".}
+
+proc shutdown*(s: SocketHandle, how: cint): cint {.libWs2_32, importc: "shutdown".}
+
 proc WSAStartup*(wVersionRequested: Word, 
                  lpWSAData: LPWSADATA): cint {.libWs2_32, importc: "WSAStartup".}
 
@@ -120,6 +124,16 @@ proc WSAIoctl*(
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSAIoctl".}
 
+proc WSASend*(
+  s: SocketHandle,
+  lpBuffers: LPWSABUF,
+  dwBufferCount: DWORD,
+  lpNumberOfBytesSent: LPDWORD,
+  dwFlags: DWORD, 
+  lpOverlapped: LPWSAOVERLAPPED,
+  lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
+): cint {.libWs2_32, importc: "WSASend".}
+
 proc WSARecv*(
   s: SocketHandle,
   lpBuffers: LPWSABUF,
@@ -129,5 +143,7 @@ proc WSARecv*(
   lpOverlapped: LPWSAOVERLAPPED,
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSARecv".}
+
+proc WSACleanup*(): cint {.libWs2_32, importc: "WSACleanup".}
 
 proc WSAGetLastError*(): cint {.libWs2_32, importc: "WSAGetLastError".}
