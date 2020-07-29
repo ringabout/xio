@@ -1,5 +1,5 @@
 import wsadata, guiddef, winnt, types
-import base / [ntdef, sockettypes, ws2types, minwindef, qos]
+import base / [ntdef, sockettypes, ws2types, minwindef, qos, bsdtypes]
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
@@ -91,7 +91,6 @@ const
   AF_MAX* = 33
 
 
-proc closeSocket*(s: SocketHandle): cint {.libWs2_32, importc: "closesocket".}
 
 proc shutdown*(s: SocketHandle, how: cint): cint {.libWs2_32, importc: "shutdown".}
 
@@ -106,6 +105,34 @@ proc WSASocket*(
   g: GROUP,
   dwFlags: DWORD
 ): SocketHandle {.libWs2_32, importc: "WSASocketW".}
+
+proc accept*(s: SocketHandle, a: var SockAddr, 
+             addrlen: var cint): SocketHandle {.libWs2_32, importc: "accept".}
+
+proc bindAddr*(s: SocketHandle, name: var SockAddr, 
+               namelen: cint): cint {.libWs2_32, importc: "bind".}
+
+proc closeSocket*(s: SocketHandle): cint {.libWs2_32, importc: "closesocket".}
+
+proc connect*(s: SocketHandle, name: var SockAddr, 
+              namelen: cint): cint {.libWs2_32, importc: "connect".}
+
+proc ioctlsocket*(s: SocketHandle, cmd: clong, 
+                  argp: var uulong): cint {.libWs2_32, importc: "ioctlsocket".}
+
+proc getsockname*(s: SocketHandle, name: var SockAddr,
+                  namelen: var cint): cint {.libWs2_32, importc: "getsockname".}
+
+proc getpeername*(s: SocketHandle, name: var SockAddr,
+                  namelen: var cint): cint {.libWs2_32, importc: "getpeername".}
+
+proc getsockopt*(s: SocketHandle, level, optname: cint, optval: cstring,
+                 optlen: var cint): cint {.libWs2_32, importc: "getsockopt".}
+
+proc setsockopt*(s: SocketHandle, level, optname: cint, optval: cstring,
+                 optlen: cint): cint {.libWs2_32, importc: "getsockopt".}
+
+proc listen*(s: SocketHandle, backlog: cint): cint {.libWs2_32, importc: "listen".}
 
 proc WSAConnect*(
   s: SocketHandle,
