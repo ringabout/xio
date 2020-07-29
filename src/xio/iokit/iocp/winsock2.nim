@@ -1,5 +1,5 @@
 import wsadata, guiddef, winnt, types
-import base / [ws2types, basetypes, minwindef, qos]
+import base / [ntdef, sockettypes, ws2types, minwindef, qos]
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
@@ -10,8 +10,6 @@ const
   WSAPROTOCOL_LEN = 255
 
 type
-  SocketHandle* = UINT_PTR
-
   GROUP* = uint32
 
   WSAPROTOCOLCHAIN* = object
@@ -53,10 +51,8 @@ type
 
 
 const
-  INVALID_HANDLE_VALUE* = cast[Handle](-1)
   WSA_IO_PENDING* = 997'i32
   INFINITE* = -1'i32
-  SOCKET_ERROR* = -1'i32
 
   AF_UNSPEC* = 0
   AF_UNIX* = 1

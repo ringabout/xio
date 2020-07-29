@@ -236,3 +236,11 @@ proc hello() =
     else:
       complete(ret, 5)
 ```
+
+Nim 的 async 可以同 threadpool 一同使用，然而 threadpool 是阻塞的。
+
+```nim
+async with worker:
+  worker.spawn(task())
+  worker.spawn(task())
+```

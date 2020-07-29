@@ -1,11 +1,7 @@
-import base / [minwindef, basetypes]
+import base / [ntdef, minwindef, basetypes]
 
 
 type
-  Handle* = pointer
-  HDC* = Handle
-  HGLRC* = Handle
-
   WINBOOL* = int32 ## if WINBOOL != 0, it succeeds which is different from posix.
 
   OVERLAPPED_offset* = object

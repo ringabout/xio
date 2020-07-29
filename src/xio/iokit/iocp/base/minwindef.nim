@@ -21,6 +21,3 @@ type
   UCHAR* = cuchar
   PUCHAR* = ptr UCHAR
   PSZ* = cstring
-
-  PVOID* = pointer
-  LPVOID* = pointer
