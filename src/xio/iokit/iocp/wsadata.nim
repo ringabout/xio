@@ -1,4 +1,4 @@
-import types
+import base / minwindef
 
 
 const
@@ -15,7 +15,7 @@ type
     iMaxSockets*: cushort
     iMaxUdpDg*: cushort
     lpVendorInfo*: cstring
-    szDescription*: array[WSADESCRIPTION_LEN+1, char]
-    szSystemStatus*: array[WSASYS_STATUS_LEN+1, char]
+    szDescription*: array[WSADESCRIPTION_LEN+1, cchar]
+    szSystemStatus*: array[WSASYS_STATUS_LEN+1, cchar]
 
   LPWSADATA* = ptr WSADATA

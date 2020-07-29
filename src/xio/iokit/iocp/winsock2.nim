@@ -1,5 +1,5 @@
-import types, wsadata, guiddef, winnt
-import base / [ws2types, basetypes]
+import wsadata, guiddef, winnt, types
+import base / [ws2types, basetypes, minwindef, qos]
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
@@ -12,10 +12,10 @@ const
 type
   SocketHandle* = UINT_PTR
 
-  GROUP = uint32
+  GROUP* = uint32
 
   WSAPROTOCOLCHAIN* = object
-    chainLen*: int32
+    chainLen*: cint
     chainEntries*: array[MAX_PROTOCOL_CHAIN, DWORD]
   
   LPWSAPROTOCOLCHAIN* = ptr WSAPROTOCOLCHAIN
@@ -29,15 +29,15 @@ type
     providerId*: GUID
     dwCatalogEntryId*: DWORD
     protocolChain*: WSAPROTOCOLCHAIN
-    iVersion*: int32
-    iAddressFamily*: int32
-    iMaxSockAddr*: int32
-    iMinSockAddr*: int32
-    iSocketType*: int32
-    iProtocol*: int32
-    iProtocolMaxOffset*: int32
-    iNetworkByteOrder*: int32
-    iSecurityScheme*: int32
+    iVersion*: cint
+    iAddressFamily*: cint
+    iMaxSockAddr*: cint
+    iMinSockAddr*: cint
+    iSocketType*: cint
+    iProtocol*: cint
+    iProtocolMaxOffset*: cint
+    iNetworkByteOrder*: cint
+    iSecurityScheme*: cint
     dwMessageSize*: DWORD
     dwProviderReserved*: DWORD
     szProtocol*: array[WSAPROTOCOL_LEN + 1, WChar]
@@ -45,9 +45,9 @@ type
   LPWSAPROTOCOL_INFOW* = ptr WSAPROTOCOL_INFOW
 
   QOS* = object
-    SendingFlowspec: FLOWSPEC
-    ReceivingFlowspec: FLOWSPEC
-    ProviderSpecific: WSABUF
+    sendingFlowspec*: FLOWSPEC
+    receivingFlowspec*: FLOWSPEC
+    providerSpecific*: WSABUF
 
   LPQOS* = ptr QOS
 

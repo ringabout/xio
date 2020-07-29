@@ -2,8 +2,7 @@
 
 
 import iocp / [types, winsock2]
-
-export types, winsock2
+import iocp / base / [basetypes, minwindef]
 
 
 proc createIoCompletionPort*(
