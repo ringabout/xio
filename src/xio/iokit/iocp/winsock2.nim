@@ -1,5 +1,5 @@
-import wsadata, guiddef, winnt, types
-import base / [ntdef, sockettypes, ws2types, minwindef, qos, bsdtypes, inaddr]
+import wsadata, guiddef, types
+import base / [ntdef, sockettypes, winnt, ws2types, minwindef, qos, bsdtypes, inaddr]
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
