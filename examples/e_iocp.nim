@@ -27,17 +27,6 @@ block:
     address = "127.0.0.1"
     port = "8080"
 
-    # AddrInfoA* = object
-    # aiFlags*: cint
-    # aiFamily*: cint
-    # aiSocktype*: cint
-    # aiProtocol*: cint
-    # aiAddrlen*: size_t
-    # aiCanonname*: cstring
-    # aiAddr*: ptr SockAddr
-    # aiNext*: ptr AddrInfoA
-
-
   var hints: AddrInfoA
   var result: ptr AddrInfoA
 
@@ -46,4 +35,4 @@ block:
   hints.aiProtocol = 6
 
   echo getAddrInfo(address, port, addr hints, result)
-  echo result[]
+  echo result.repr

@@ -10,3 +10,10 @@ proc getAddrInfo*(
   pHints: ptr AddrInfoA,
   ppResult: var PAddrInfoA
 ): cint {.libWs2_32, importc: "getaddrinfo"}
+
+proc getAddrInfoW*(
+  pNodeName: PCWSTR,
+  pServiceName: PCWSTR,
+  pHints: ptr AddrInfoW,
+  ppResult: var PAddrInfoW
+): cint {.libWs2_32, importc: "GetaddrinfoW"}
