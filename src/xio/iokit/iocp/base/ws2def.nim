@@ -21,7 +21,7 @@ type
     aiSocktype*: cint
     aiProtocol*: cint
     aiAddrlen*: size_t
-    aiCanonname*: PWSTR,
+    aiCanonname*: PWSTR
     aiAddr*: ptr SockAddr
     aiNext*: ptr AddrInfoA
 
