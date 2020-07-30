@@ -133,20 +133,21 @@ proc getsockopt*(s: SocketHandle, level, optname: cint, optval: cstring,
 proc setsockopt*(s: SocketHandle, level, optname: cint, optval: cstring,
                  optlen: cint): cint {.libWs2_32, importc: "setsockopt".}
 
-proc htonl*(hostlong: uulong): uulong {.libWs2_32, importc: "htonl".}
+proc htonl*(hostlong: uulong): uulong {.libWs2_32, importc: "htonl".} =
+  ## Converts a uulong from host to TCP/IP network byte order (which is big-endian).
+  runnableExamples:
+    doAssert htonl(0x1) == 16777216
 
-proc htons*(hostshort: uushort): uushort {.libWs2_32, importc: "htons".}
+proc htons*(hostshort: uushort): uushort {.libWs2_32, importc: "htons".} =
+  ## Converts a uushort from host to TCP/IP network byte order (which is big-endian).
+  runnableExamples:
+    doAssert htons(0x1) == 256
 
 proc inet_addr*(cp: cstring): culong {.libWs2_32, importc: "inet_addr".} =
   ## Converts an IPv4 address from dotted-quad string to 32-bit packed binary format.
   ## 
   ## Notes:
-  ##       a.b.c.d a.b.c a.b a
-  ##       When four parts are specified, each is interpreted as a byte of data and assigned, 
-  ##       from left to right, to the 4 bytes of an Internet address. 
-  ##       When an Internet address is viewed as a 32-bit integer quantity on the Intel architecture, 
-  ##       the bytes referred to above appear as "d.c.b.a''. 
-  ##       That is, the bytes on an Intel processor are ordered from right to left.
+  ##       Pays attenetion to byte order (which is the same as host).
   runnableExamples:
     # Only in Intel
     doAssert inet_addr("127.0.0.1") == 16777343
