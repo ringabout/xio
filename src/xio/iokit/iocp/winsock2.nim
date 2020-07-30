@@ -1,5 +1,5 @@
 import wsadata, guiddef, winnt, types
-import base / [ntdef, sockettypes, ws2types, minwindef, qos, bsdtypes]
+import base / [ntdef, sockettypes, ws2types, minwindef, qos, bsdtypes, inaddr]
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
@@ -116,6 +116,7 @@ proc closeSocket*(s: SocketHandle): cint {.libWs2_32, importc: "closesocket".}
 
 proc connect*(s: SocketHandle, name: var SockAddr, 
               namelen: cint): cint {.libWs2_32, importc: "connect".}
+  ## The client connects to an address.
 
 proc ioctlsocket*(s: SocketHandle, cmd: clong, 
                   argp: var uulong): cint {.libWs2_32, importc: "ioctlsocket".}
@@ -130,7 +131,28 @@ proc getsockopt*(s: SocketHandle, level, optname: cint, optval: cstring,
                  optlen: var cint): cint {.libWs2_32, importc: "getsockopt".}
 
 proc setsockopt*(s: SocketHandle, level, optname: cint, optval: cstring,
-                 optlen: cint): cint {.libWs2_32, importc: "getsockopt".}
+                 optlen: cint): cint {.libWs2_32, importc: "setsockopt".}
+
+proc htonl*(hostlong: uulong): uulong {.libWs2_32, importc: "htonl".}
+
+proc htons*(hostshort: uushort): uushort {.libWs2_32, importc: "htons".}
+
+proc inet_addr*(cp: cstring): culong {.libWs2_32, importc: "inet_addr".} =
+  ## Converts an IPv4 address from dotted-quad string to 32-bit packed binary format.
+  ## 
+  ## Notes:
+  ##       a.b.c.d a.b.c a.b a
+  ##       When four parts are specified, each is interpreted as a byte of data and assigned, 
+  ##       from left to right, to the 4 bytes of an Internet address. 
+  ##       When an Internet address is viewed as a 32-bit integer quantity on the Intel architecture, 
+  ##       the bytes referred to above appear as "d.c.b.a''. 
+  ##       That is, the bytes on an Intel processor are ordered from right to left.
+  runnableExamples:
+    # Only in Intel
+    doAssert inet_addr("127.0.0.1") == 16777343
+    doAssert inet_addr("1.0.0.127") == 2130706433
+
+proc inet_ntoa*(inAddr: InAddr): cstring {.libWs2_32, importc: "inet_ntoa".}
 
 proc listen*(s: SocketHandle, backlog: cint): cint {.libWs2_32, importc: "listen".}
 

@@ -1,7 +1,7 @@
 import bsdtypes, inaddr
 
 type
-  Sockaddr* = object
+  SockAddr* = object
     saFamily*: uushort
     saData*: array[14, cchar]
 
@@ -10,3 +10,7 @@ type
     sinPort*: uushort
     sinAddr*: InAddr
     sinZero*: array[8, cchar]
+
+
+proc newSockAddr*(saFamily: uushort, saData: array[14, char]): SockAddr =
+  SockAddr(saFamily: saFamily, saData: saData)
