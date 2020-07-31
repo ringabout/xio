@@ -91,9 +91,6 @@ const
   AF_MAX* = 33
 
 
-
-proc shutdown*(s: SocketHandle, how: cint): cint {.libWs2_32, importc: "shutdown".}
-
 proc WSAStartup*(wVersionRequested: Word, 
                  lpWSAData: LPWSADATA): cint {.libWs2_32, importc: "WSAStartup".}
 
@@ -119,6 +116,22 @@ proc closeSocket*(s: SocketHandle): cint {.libWs2_32, importc: "closesocket".}
 proc connect*(s: SocketHandle, name: var SockAddr, 
               namelen: cint): cint {.libWs2_32, importc: "connect".}
   ## The client connects to an address.
+
+proc recv*(s: SocketHandle, buf: cstring, len, flags: cint): cint {.libWs2_32, importc: "recv".}
+
+proc recvfrom*(s: SocketHandle, buf: cstring, len, flags: cint,
+               fromm: var SockAddr, fromlen: var cint): cint {.libWs2_32, importc: "recvfrom".}
+
+# proc select*(nfds: cint, readfds, writefds, exceptfds: ptr TFdSet,
+#              timeout: ptr Timeval): cint
+
+proc send*(s: SocketHandle, buf: cstring, 
+           len, flags: cint): cint {.libWs2_32, importc: "send".}
+
+proc sendto*(s: SocketHandle, buf: pointer, len, flags: cint,
+             to: ptr SockAddr, tolen: cint): cint {.libWs2_32, importc: "sendto".}
+
+proc shutdown*(s: SocketHandle, how: cint): cint {.libWs2_32, importc: "shutdown".}
 
 proc ioctlsocket*(s: SocketHandle, cmd: clong, 
                   argp: var uulong): cint {.libWs2_32, importc: "ioctlsocket".}

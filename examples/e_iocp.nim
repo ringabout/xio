@@ -24,8 +24,8 @@ block:
   if WSAStartup(0x0101, addr wsa) != 0: 
     doAssert false
   let 
-    address = "www.baidu.com"
-    port = "80"
+    address = "127.0.0.1"
+    port = "5000"
 
   var hints: AddrInfoA
   var result: ptr AddrInfoA
@@ -41,6 +41,19 @@ block:
 
   var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
   echo connect(connectSocket, result.aiAddr[], cast[cint](result.aiAddrlen))
+
+  var s = "This is a test!"
+  echo send(connectSocket, s, s.len.cint, 0)
+
+
+  var recvBuf = newString(12)
+
+
+  let res = recv(connectSocket, recvBuf, recvBuf.len.cint, 0)
+  echo res
+  echo recvBuf
+  echo "done"
+
 
   freeAddrInfo(result)
   discard WSACleanup()
