@@ -54,24 +54,24 @@ type
   PCUUCSSTR* = ptr UCSCHAR 
   PUUCSCHAR* = ptr UCSCHAR 
   PCUUCSCHAR* = ptr UCSCHAR 
-  PCHAR* = ptr CHAR
-  LPCH* = ptr CHAR
-  PCH* = ptr CHAR
-  LPCCH* = ptr CHAR
-  PCCH* = ptr CHAR
-  NPSTR* = ptr CHAR
-  LPSTR* = ptr CHAR
-  PSTR* = ptr CHAR
+  PCHAR* = cstring
+  LPCH* = cstring
+  PCH* = cstring
+  LPCCH* = cstring
+  PCCH* = cstring
+  NPSTR* = cstring
+  LPSTR* = cstring
+  PSTR* = cstring
   PZPSTR* = ptr PSTR
   PCZPSTR* = ptr PSTR
-  LPCSTR* = ptr CHAR
-  PCSTR* = ptr CHAR
+  LPCSTR* = cstring
+  PCSTR* = cstring
   PZPCSTR* = ptr PCSTR
   PCZPCSTR* = ptr PCSTR
-  PZZSTR* = ptr CHAR
-  PCZZSTR* = ptr CHAR
-  PNZCH* = ptr CHAR
-  PCNZCH* = ptr CHAR
+  PZZSTR* = cstring
+  PCZZSTR* = cstring
+  PNZCH* = cstring
+  PCNZCH* = cstring
 
 
 const 

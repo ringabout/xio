@@ -24,11 +24,13 @@ block:
   if WSAStartup(0x0101, addr wsa) != 0: 
     doAssert false
   let 
-    address = "127.0.0.1"
-    port = "8080"
+    address = "www.baidu.com"
+    port = "80"
 
   var hints: AddrInfoA
   var result: ptr AddrInfoA
+
+  zeroMem(addr hints, sizeof(hints))
 
   hints.aiFamily = AF_INET
   hints.aiSocktype = 1
@@ -36,3 +38,9 @@ block:
 
   echo getAddrInfo(address, port, addr hints, result)
   echo result.repr
+
+  var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
+  echo connect(connectSocket, result.aiAddr[], cast[cint](result.aiAddrlen))
+
+  freeAddrInfo(result)
+  discard WSACleanup()

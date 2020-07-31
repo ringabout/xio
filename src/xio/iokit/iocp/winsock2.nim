@@ -106,6 +106,8 @@ proc WSASocket*(
   dwFlags: DWORD
 ): SocketHandle {.libWs2_32, importc: "WSASocketW".}
 
+proc socket*(af, typ, protocol: cint): SocketHandle {.libWs2_32, importc: "socket".}
+
 proc accept*(s: SocketHandle, a: var SockAddr, 
              addrlen: var cint): SocketHandle {.libWs2_32, importc: "accept".}
 

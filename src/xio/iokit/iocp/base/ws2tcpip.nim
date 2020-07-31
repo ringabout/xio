@@ -11,9 +11,11 @@ proc getAddrInfo*(
   ppResult: var PAddrInfoA
 ): cint {.libWs2_32, importc: "getaddrinfo"}
 
-proc getAddrInfoW*(
+proc getAddrInfo*(
   pNodeName: PCWSTR,
   pServiceName: PCWSTR,
   pHints: ptr AddrInfoW,
   ppResult: var PAddrInfoW
 ): cint {.libWs2_32, importc: "GetaddrinfoW"}
+
+proc freeAddrInfo*(pAddrInfo: PADDRINFOA) {.libWs2_32, importc: "freeaddrinfo"}
