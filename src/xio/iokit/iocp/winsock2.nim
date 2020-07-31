@@ -95,6 +95,9 @@ const
   SD_SEND* = 1    ## Shutdown send operations.
   SD_BOTH* = 2    ## Shutdown both send and receive operations.
 
+  SOL_SOCKET* = 0xffff
+  SOMAXCONN* = 0x7fffffff
+
 proc WSAStartup*(wVersionRequested: Word, 
                  lpWSAData: LPWSADATA): cint {.libWs2_32, importc: "WSAStartup".}
 
@@ -114,6 +117,7 @@ proc accept*(s: SocketHandle, a: var SockAddr,
 
 proc bindAddr*(s: SocketHandle, name: var SockAddr, 
                namelen: cint): cint {.libWs2_32, importc: "bind".}
+  # SOMAXCONN
 
 proc closeSocket*(s: SocketHandle): cint {.libWs2_32, importc: "closesocket".}
 

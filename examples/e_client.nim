@@ -24,8 +24,10 @@ block:
 
   proc main =
     var wsa: WSAData
+
     if WSAStartup(0x0101, addr wsa) != 0: 
       doAssert false
+
     let 
       address = "127.0.0.1"
       port = "5000"
@@ -54,9 +56,7 @@ block:
       discard WSACleanup()
       return
 
-
-    var recvBuf = newString(12)
-
+    var recvBuf = newString(16)
 
     let res = recv(connectSocket, recvBuf, recvBuf.len.cint, 0)
     echo res
