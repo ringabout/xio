@@ -5,6 +5,8 @@ import ../src/xio/iokit/iocp/base/ws2types
 import ../src/xio/iokit/iocp/base/bsdtypes
 import ../src/xio/iokit/iocp/base/ws2tcpip
 import ../src/xio/iokit/iocp/base/ws2def
+import ../src/xio/iokit/iocp/base/sockettypes
+
 
 # proc getAddrInfo*(
 #   pNodeName: PCSTR,
@@ -20,40 +22,50 @@ block:
   # echo htons(256)
   # echo htonl(1)
 
-  var wsa: WSAData
-  if WSAStartup(0x0101, addr wsa) != 0: 
-    doAssert false
-  let 
-    address = "127.0.0.1"
-    port = "5000"
+  proc main =
+    var wsa: WSAData
+    if WSAStartup(0x0101, addr wsa) != 0: 
+      doAssert false
+    let 
+      address = "127.0.0.1"
+      port = "5000"
 
-  var hints: AddrInfoA
-  var result: ptr AddrInfoA
+    var hints: AddrInfoA
+    var result: ptr AddrInfoA
 
-  zeroMem(addr hints, sizeof(hints))
+    zeroMem(addr hints, sizeof(hints))
 
-  hints.aiFamily = AF_INET
-  hints.aiSocktype = 1
-  hints.aiProtocol = 6
+    hints.aiFamily = AF_INET
+    hints.aiSocktype = 1
+    hints.aiProtocol = 6
 
-  echo getAddrInfo(address, port, addr hints, result)
-  echo result.repr
+    echo getAddrInfo(address, port, addr hints, result)
+    echo result.repr
 
-  var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
-  echo connect(connectSocket, result.aiAddr[], cast[cint](result.aiAddrlen))
+    var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
+    echo connect(connectSocket, result.aiAddr[], cast[cint](result.aiAddrlen))
 
-  var s = "This is a test!"
-  echo send(connectSocket, s, s.len.cint, 0)
-
-
-  var recvBuf = newString(12)
-
-
-  let res = recv(connectSocket, recvBuf, recvBuf.len.cint, 0)
-  echo res
-  echo recvBuf
-  echo "done"
+    var s = "This is a test!\n"
+    echo send(connectSocket, s, s.len.cint, 0)
+    let ires = shutdown(connectSocket, SD_SEND)
+    if ires == SOCKET_ERROR:
+      echo "shutdown failed: ", WSAGetLastError()
+      discard closeSocket(connectSocket)
+      discard WSACleanup()
+      return
 
 
-  freeAddrInfo(result)
-  discard WSACleanup()
+    var recvBuf = newString(12)
+
+
+    let res = recv(connectSocket, recvBuf, recvBuf.len.cint, 0)
+    echo res
+    echo recvBuf
+    echo "done"
+
+
+    freeAddrInfo(result)
+    discard closeSocket(connectSocket)
+    discard WSACleanup()
+
+  main()

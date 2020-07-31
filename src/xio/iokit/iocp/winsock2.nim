@@ -91,6 +91,10 @@ const
   AF_MAX* = 33
 
 
+  SD_RECEIVE* = 0 ## Shutdown receive operations.
+  SD_SEND* = 1    ## Shutdown send operations.
+  SD_BOTH* = 2    ## Shutdown both send and receive operations.
+
 proc WSAStartup*(wVersionRequested: Word, 
                  lpWSAData: LPWSADATA): cint {.libWs2_32, importc: "WSAStartup".}
 
