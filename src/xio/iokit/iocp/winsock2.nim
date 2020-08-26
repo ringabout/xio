@@ -184,36 +184,38 @@ proc WSAConnect*(
   s: SocketHandle,
   name: var SockAddr,
   namelen: cint,
-  lpCallerData: LPWSABUF,
-  lpCalleeData: LPWSABUF,
-  lpSQOS: LPQOS, 
-  lpGQOS: LPQOS): cint {.libWs2_32, importc: "WSAConnect".}
+  lpCallerData: var WSABUF, # LPWSABUF
+  lpCalleeData: var WSABUF, #LPWSABUF
+  lpSQOS: var QOS, # LPQOS
+  lpGQOS: var QOS  # LPQOS
+): cint {.libWs2_32, importc: "WSAConnect".}
 
 proc WSAIoctl*(
   s: SocketHandle, 
   dwIoControlCode: DWORD, lpvInBuffer: LPVOID,
   cbInBuffer: DWORD, lpvOutBuffer: LPVOID, cbOutBuffer: DWORD,
-  lpcbBytesReturned: LPDWORD, lpOverlapped: LPOVERLAPPED,
+  lpcbBytesReturned: var DWORD, # LPDWORD
+  lpOverlapped: var OVERLAPPED, # LPOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSAIoctl".}
 
 proc WSASend*(
   s: SocketHandle,
-  lpBuffers: LPWSABUF,
+  lpBuffers: var WSABUF, # LPWSABUF
   dwBufferCount: DWORD,
-  lpNumberOfBytesSent: LPDWORD,
+  lpNumberOfBytesSent: var DWORD, # LPDWORD
   dwFlags: DWORD, 
-  lpOverlapped: LPWSAOVERLAPPED,
+  lpOverlapped: var WSAOVERLAPPED, # LPWSAOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSASend".}
 
 proc WSARecv*(
   s: SocketHandle,
-  lpBuffers: LPWSABUF,
+  lpBuffers: var WSABUF, # LPWSABUF
   dwBufferCount: DWORD,
-  lpNumberOfBytesRecvd: LPDWORD,
-  lpFlags: LPDWORD,
-  lpOverlapped: LPWSAOVERLAPPED,
+  lpNumberOfBytesRecvd: var DWORD, # LPDWORD
+  lpFlags: var DWORD, # LPDWORD
+  lpOverlapped: var WSAOVERLAPPED, # LPWSAOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSARecv".}
 

@@ -4,6 +4,8 @@
 import iocp / [types, winsock2]
 import iocp / base / [ntdef, basetypes, minwindef, handleapi]
 
+export handleapi, ntdef, types, minwindef, basetypes
+
 
 proc createIoCompletionPort*(
   fileHandle: Handle, 
@@ -27,18 +29,18 @@ proc createIoCompletionPort*(
 
 proc getQueuedCompletionStatus*(
   completionPort: Handle,
-  lpNumberOfBytesTransferred: var DWORD,
-  lpCompletionKey: var ULONG_PTR,
-  lpOverlapped: var OVERLAPPED,
+  lpNumberOfBytesTransferred: var DWORD, # LPDWORD
+  lpCompletionKey: var ULONG_PTR, # LPULONG_PTR
+  lpOverlapped: var OVERLAPPED, # LPOVERLAPPED
   dwMilliseconds: DWORD
 ): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatus"}
   ## Gets one completion port entry.
 
 proc getQueuedCompletionStatusEx*(
   completionPort: Handle,
-  lpCompletionPortEntries: var OVERLAPPED_ENTRY,
+  lpCompletionPortEntries: var OVERLAPPED_ENTRY, # LPOVERLAPPED_ENTRY
   ulCount: ULONG,
-  ulNumEntriesRemoved: var ULONG,
+  ulNumEntriesRemoved: var ULONG, # LPULONG
   dwMilliseconds: DWORD,
   fAlertable: WINBOOL
 ): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatusEx".}
