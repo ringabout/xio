@@ -8,14 +8,14 @@ proc getAddrInfo*(
   pNodeName: PCSTR,
   pServiceName: PCSTR,
   pHints: ptr AddrInfoA,
-  ppResult: var PAddrInfoA
+  ppResult: ptr PAddrInfoA
 ): cint {.libWs2_32, importc: "getaddrinfo"}
 
 proc getAddrInfo*(
   pNodeName: PCWSTR,
   pServiceName: PCWSTR,
   pHints: ptr AddrInfoW,
-  ppResult: var PAddrInfoW
+  ppResult: ptr PAddrInfoW
 ): cint {.libWs2_32, importc: "GetaddrinfoW"}
 
 proc freeAddrInfo*(pAddrInfo: PADDRINFOA) {.libWs2_32, importc: "freeaddrinfo"}

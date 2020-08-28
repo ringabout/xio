@@ -33,7 +33,7 @@ block:
       port = "5000"
 
     var hints: AddrInfoA
-    var result: ptr AddrInfoA
+    var result: PAddrInfoA
 
     zeroMem(addr hints, sizeof(hints))
 
@@ -41,11 +41,11 @@ block:
     hints.aiSocktype = 1
     hints.aiProtocol = 6
 
-    echo getAddrInfo(address, port, addr hints, result)
+    echo getAddrInfo(address, port, addr hints, addr result)
     echo result.repr
 
     var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
-    echo connect(connectSocket, result.aiAddr[], cast[cint](result.aiAddrlen))
+    echo connect(connectSocket, result.aiAddr, cast[cint](result.aiAddrlen))
 
     var s = "This is a test!\n"
     echo send(connectSocket, s, s.len.cint, 0)

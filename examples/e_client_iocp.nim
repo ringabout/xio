@@ -40,7 +40,7 @@ block:
       port = "5000"
 
     var hints: AddrInfoA
-    var result: ptr AddrInfoA
+    var result: PAddrInfoA
 
     zeroMem(addr hints, sizeof(hints))
 
@@ -48,11 +48,11 @@ block:
     hints.aiSocktype = 1
     hints.aiProtocol = 6
 
-    echo getAddrInfo(address, port, addr hints, result)
+    echo getAddrInfo(address, port, addr hints, addr result)
     echo result.repr
 
     var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
-    echo connect(connectSocket, result.aiAddr[], cast[cint](result.aiAddrlen))
+    echo connect(connectSocket, result.aiAddr, cast[cint](result.aiAddrlen))
 
     # var s = "This is a test!\n"
     # echo send(connectSocket, s, s.len.cint, 0)
@@ -81,7 +81,7 @@ block:
 
     var flag = cast[DWORD](0)
 
-    let res = WSARecv(connectSocket, b, 1, nums, flag, over, nil)
+    let res = WSARecv(connectSocket, addr b, 1, addr nums, addr flag, addr over, nil)
 
     discard createIoCompletionPort(over.hevent, queue, 0, 1)
 

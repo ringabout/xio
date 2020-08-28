@@ -1,9 +1,7 @@
-import base / [ntdef, minwindef, basetypes]
+import ntdef, minwindef, basetypes
 
 
 type
-  WINBOOL* = int32 ## if WINBOOL != 0, it succeeds which is different from posix.
-
   OVERLAPPED_offset* = object
     offset*: DWORD
     offsetHigh*: DWORD
@@ -19,6 +17,9 @@ type
     hevent*: Handle
 
   LPOVERLAPPED* = ptr OVERLAPPED
+
+  LPOVERLAPPED_COMPLETION_ROUTINE* = proc (dwErrorCode: DWORD, dwNumberOfBytesTransfered: DWORD,
+                                             lpOverlapped: LPOVERLAPPED)
 
   OVERLAPPED_ENTRY* = object
     lpCompletionKey*: ULONG_PTR
@@ -45,3 +46,11 @@ type
     buf*: cstring
 
   LPWSABUF* = ptr WSABUF
+
+  SECURITY_ATTRIBUTES* = object
+    nLength*: DWORD
+    lpSecurityDescriptor*: LPVOID
+    bInheritHandle*: WINBOOL
+  
+  PSECURITY_ATTRIBUTES* = ptr SECURITY_ATTRIBUTES
+  LPSECURITY_ATTRIBUTES* = ptr SECURITY_ATTRIBUTES

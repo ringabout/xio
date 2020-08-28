@@ -21,3 +21,5 @@ type
   UCHAR* = cuchar
   PUCHAR* = ptr UCHAR
   PSZ* = cstring
+
+  WINBOOL* = int32 ## if WINBOOL != 0, it succeeds which is different from posix.

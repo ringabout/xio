@@ -1,5 +1,5 @@
-import wsadata, guiddef, types
-import base / [ntdef, sockettypes, winnt, ws2types, minwindef, qos, bsdtypes, inaddr]
+import wsadata, guiddef
+import base / [ntdef, minwinbase, sockettypes, winnt, ws2types, minwindef, qos, bsdtypes, inaddr]
 
 
 {.pragma: libWs2_32, stdcall, dynlib: "Ws2_32.dll".}
@@ -105,30 +105,30 @@ proc WSASocket*(
   af: cint,
   theType: cint,
   protocol: cint,
-  lpProtocolInfo: var WSAPROTOCOL_INFOW,
+  lpProtocolInfo: LPWSAPROTOCOL_INFOW,
   g: GROUP,
   dwFlags: DWORD
 ): SocketHandle {.libWs2_32, importc: "WSASocketW".}
 
 proc socket*(af, typ, protocol: cint): SocketHandle {.libWs2_32, importc: "socket".}
 
-proc accept*(s: SocketHandle, a: var SockAddr, 
+proc accept*(s: SocketHandle, a: ptr SockAddr, 
              addrlen: var cint): SocketHandle {.libWs2_32, importc: "accept".}
 
-proc bindAddr*(s: SocketHandle, name: var SockAddr, 
+proc bindAddr*(s: SocketHandle, name: ptr SockAddr, 
                namelen: cint): cint {.libWs2_32, importc: "bind".}
   # SOMAXCONN
 
 proc closeSocket*(s: SocketHandle): cint {.libWs2_32, importc: "closesocket".}
 
-proc connect*(s: SocketHandle, name: var SockAddr, 
+proc connect*(s: SocketHandle, name: ptr SockAddr, 
               namelen: cint): cint {.libWs2_32, importc: "connect".}
   ## The client connects to an address.
 
 proc recv*(s: SocketHandle, buf: cstring, len, flags: cint): cint {.libWs2_32, importc: "recv".}
 
 proc recvfrom*(s: SocketHandle, buf: cstring, len, flags: cint,
-               fromm: var SockAddr, fromlen: var cint): cint {.libWs2_32, importc: "recvfrom".}
+               fromm: ptr SockAddr, fromlen: var cint): cint {.libWs2_32, importc: "recvfrom".}
 
 # proc select*(nfds: cint, readfds, writefds, exceptfds: ptr TFdSet,
 #              timeout: ptr Timeval): cint
@@ -144,10 +144,10 @@ proc shutdown*(s: SocketHandle, how: cint): cint {.libWs2_32, importc: "shutdown
 proc ioctlsocket*(s: SocketHandle, cmd: clong, 
                   argp: var uulong): cint {.libWs2_32, importc: "ioctlsocket".}
 
-proc getsockname*(s: SocketHandle, name: var SockAddr,
+proc getsockname*(s: SocketHandle, name: ptr SockAddr,
                   namelen: var cint): cint {.libWs2_32, importc: "getsockname".}
 
-proc getpeername*(s: SocketHandle, name: var SockAddr,
+proc getpeername*(s: SocketHandle, name: ptr SockAddr,
                   namelen: var cint): cint {.libWs2_32, importc: "getpeername".}
 
 proc getsockopt*(s: SocketHandle, level, optname: cint, optval: cstring,
@@ -182,40 +182,40 @@ proc listen*(s: SocketHandle, backlog: cint): cint {.libWs2_32, importc: "listen
 
 proc WSAConnect*(
   s: SocketHandle,
-  name: var SockAddr,
+  name: ptr SockAddr,
   namelen: cint,
-  lpCallerData: var WSABUF, # LPWSABUF
-  lpCalleeData: var WSABUF, #LPWSABUF
-  lpSQOS: var QOS, # LPQOS
-  lpGQOS: var QOS  # LPQOS
+  lpCallerData: LPWSABUF, # LPWSABUF
+  lpCalleeData: LPWSABUF, #LPWSABUF
+  lpSQOS: LPQOS, # LPQOS
+  lpGQOS: LPQOS  # LPQOS
 ): cint {.libWs2_32, importc: "WSAConnect".}
 
 proc WSAIoctl*(
   s: SocketHandle, 
   dwIoControlCode: DWORD, lpvInBuffer: LPVOID,
   cbInBuffer: DWORD, lpvOutBuffer: LPVOID, cbOutBuffer: DWORD,
-  lpcbBytesReturned: var DWORD, # LPDWORD
-  lpOverlapped: var OVERLAPPED, # LPOVERLAPPED
+  lpcbBytesReturned: LPDWORD, # LPDWORD
+  lpOverlapped: LPOVERLAPPED, # LPOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSAIoctl".}
 
 proc WSASend*(
   s: SocketHandle,
-  lpBuffers: var WSABUF, # LPWSABUF
+  lpBuffers: LPWSABUF, # LPWSABUF
   dwBufferCount: DWORD,
-  lpNumberOfBytesSent: var DWORD, # LPDWORD
+  lpNumberOfBytesSent: LPDWORD, # LPDWORD
   dwFlags: DWORD, 
-  lpOverlapped: var WSAOVERLAPPED, # LPWSAOVERLAPPED
+  lpOverlapped: LPWSAOVERLAPPED, # LPWSAOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSASend".}
 
 proc WSARecv*(
   s: SocketHandle,
-  lpBuffers: var WSABUF, # LPWSABUF
+  lpBuffers: LPWSABUF, # LPWSABUF
   dwBufferCount: DWORD,
-  lpNumberOfBytesRecvd: var DWORD, # LPDWORD
-  lpFlags: var DWORD, # LPDWORD
-  lpOverlapped: var WSAOVERLAPPED, # LPWSAOVERLAPPED
+  lpNumberOfBytesRecvd: LPDWORD, # LPDWORD
+  lpFlags: LPDWORD, # LPDWORD
+  lpOverlapped: LPWSAOVERLAPPED, # LPWSAOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSARecv".}
 

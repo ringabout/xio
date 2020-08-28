@@ -1,10 +1,10 @@
 {.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}
 
 
-import iocp / [types, winsock2]
-import iocp / base / [ntdef, basetypes, minwindef, handleapi]
+import iocp / [winsock2]
+import iocp / base / [ntdef, basetypes, minwindef, handleapi, minwinbase]
 
-export handleapi, ntdef, types, minwindef, basetypes
+export handleapi, ntdef, minwindef, basetypes, minwinbase
 
 
 proc createIoCompletionPort*(
@@ -29,16 +29,16 @@ proc createIoCompletionPort*(
 
 proc getQueuedCompletionStatus*(
   completionPort: Handle,
-  lpNumberOfBytesTransferred: var DWORD, # LPDWORD
+  lpNumberOfBytesTransferred: LPDWORD, # LPDWORD
   lpCompletionKey: var ULONG_PTR, # LPULONG_PTR
-  lpOverlapped: var OVERLAPPED, # LPOVERLAPPED
+  lpOverlapped: LPOVERLAPPED, # LPOVERLAPPED
   dwMilliseconds: DWORD
 ): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatus"}
   ## Gets one completion port entry.
 
 proc getQueuedCompletionStatusEx*(
   completionPort: Handle,
-  lpCompletionPortEntries: var OVERLAPPED_ENTRY, # LPOVERLAPPED_ENTRY
+  lpCompletionPortEntries: LPOVERLAPPED_ENTRY, # LPOVERLAPPED_ENTRY
   ulCount: ULONG,
   ulNumEntriesRemoved: var ULONG, # LPULONG
   dwMilliseconds: DWORD,

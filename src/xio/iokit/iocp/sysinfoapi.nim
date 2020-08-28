@@ -1,4 +1,4 @@
-import types
+import base/[minwindef, ntdef, basetypes]
 
 
 {.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}
@@ -28,11 +28,11 @@ type
   LPSYSTEM_INFO* = ptr SYSTEM_INFO
 
 
-proc getSystemInfo*(lpSystemInfo: var SYSTEM_INFO) {.libKernel32, importc: "GetSystemInfo".}
+proc getSystemInfo*(lpSystemInfo: ptr SYSTEM_INFO) {.libKernel32, importc: "GetSystemInfo".}
 
 
 when isMainModule:
   # Error: var info = SYSTEM_INFO()
   var info: SYSTEM_INFO
-  getSystemInfo(info)
+  getSystemInfo(addr info)
   echo info
