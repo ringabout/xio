@@ -194,7 +194,7 @@ proc WSAIoctl*(
   s: SocketHandle, 
   dwIoControlCode: DWORD, lpvInBuffer: LPVOID,
   cbInBuffer: DWORD, lpvOutBuffer: LPVOID, cbOutBuffer: DWORD,
-  lpcbBytesReturned: LPDWORD, # LPDWORD
+  lpcbBytesReturned: var DWORD, # LPDWORD
   lpOverlapped: LPOVERLAPPED, # LPOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSAIoctl".}
@@ -203,7 +203,7 @@ proc WSASend*(
   s: SocketHandle,
   lpBuffers: LPWSABUF, # LPWSABUF
   dwBufferCount: DWORD,
-  lpNumberOfBytesSent: LPDWORD, # LPDWORD
+  lpNumberOfBytesSent: var DWORD, # LPDWORD
   dwFlags: DWORD, 
   lpOverlapped: LPWSAOVERLAPPED, # LPWSAOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
@@ -213,8 +213,8 @@ proc WSARecv*(
   s: SocketHandle,
   lpBuffers: LPWSABUF, # LPWSABUF
   dwBufferCount: DWORD,
-  lpNumberOfBytesRecvd: LPDWORD, # LPDWORD
-  lpFlags: LPDWORD, # LPDWORD
+  lpNumberOfBytesRecvd: var DWORD, # LPDWORD
+  lpFlags: var DWORD, # LPDWORD
   lpOverlapped: LPWSAOVERLAPPED, # LPWSAOVERLAPPED
   lpCompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE
 ): cint {.libWs2_32, importc: "WSARecv".}

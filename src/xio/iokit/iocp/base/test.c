@@ -1,12 +1,36 @@
-#define FILE_FLAG_WRITE_THROUGH         0x80000000
-#define FILE_FLAG_OVERLAPPED            0x40000000
-#define FILE_FLAG_NO_BUFFERING          0x20000000
-#define FILE_FLAG_RANDOM_ACCESS         0x10000000
-#define FILE_FLAG_SEQUENTIAL_SCAN       0x08000000
-#define FILE_FLAG_DELETE_ON_CLOSE       0x04000000
-#define FILE_FLAG_BACKUP_SEMANTICS      0x02000000
-#define FILE_FLAG_POSIX_SEMANTICS       0x01000000
-#define FILE_FLAG_SESSION_AWARE         0x00800000
-#define FILE_FLAG_OPEN_REPARSE_POINT    0x00200000
-#define FILE_FLAG_OPEN_NO_RECALL        0x00100000
-#define FILE_FLAG_FIRST_PIPE_INSTANCE   0x00080000
+#define DELETE                           (0x00010000L)
+#define READ_CONTROL                     (0x00020000L)
+#define WRITE_DAC                        (0x00040000L)
+#define WRITE_OWNER                      (0x00080000L)
+#define SYNCHRONIZE                      (0x00100000L)
+
+#define STANDARD_RIGHTS_REQUIRED         (0x000F0000L)
+
+#define STANDARD_RIGHTS_READ             (READ_CONTROL)
+#define STANDARD_RIGHTS_WRITE            (READ_CONTROL)
+#define STANDARD_RIGHTS_EXECUTE          (READ_CONTROL)
+
+#define STANDARD_RIGHTS_ALL              (0x001F0000L)
+
+#define SPECIFIC_RIGHTS_ALL              (0x0000FFFFL)
+
+//
+// AccessSystemAcl access type
+//
+
+#define ACCESS_SYSTEM_SECURITY           (0x01000000L)
+
+//
+// MaximumAllowed access type
+//
+
+#define MAXIMUM_ALLOWED                  (0x02000000L)
+
+//
+//  These are the generic rights.
+//
+
+#define GENERIC_READ                     (0x80000000L)
+#define GENERIC_WRITE                    (0x40000000L)
+#define GENERIC_EXECUTE                  (0x20000000L)
+#define GENERIC_ALL                      (0x10000000L)

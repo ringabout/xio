@@ -29,7 +29,7 @@ proc createIoCompletionPort*(
 
 proc getQueuedCompletionStatus*(
   completionPort: Handle,
-  lpNumberOfBytesTransferred: LPDWORD, # LPDWORD
+  lpNumberOfBytesTransferred: var DWORD, # LPDWORD
   lpCompletionKey: var ULONG_PTR, # LPULONG_PTR
   lpOverlapped: LPOVERLAPPED, # LPOVERLAPPED
   dwMilliseconds: DWORD

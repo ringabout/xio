@@ -1,3 +1,11 @@
+import ntdef, minwindef, minwinbase
+
+export ntdef, minwindef, minwinbase
+
+
+{.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}
+
+
 const
   FILE_FLAG_WRITE_THROUGH* = 0x80000000
   FILE_FLAG_OVERLAPPED* = 0x40000000
@@ -11,3 +19,15 @@ const
   FILE_FLAG_OPEN_REPARSE_POINT* = 0x00200000
   FILE_FLAG_OPEN_NO_RECALL* = 0x00100000
   FILE_FLAG_FIRST_PIPE_INSTANCE* = 0x00080000
+
+
+proc readDirectoryChangesW*(
+  hDirectory: Handle,
+  lpBuffer: LPVOID,
+  nBufferLength: DWORD,
+  bWatchSubtree: WINBOOL,
+  dwNotifyFilter: DWORD,
+  lpBytesReturned: var DWORD,
+  lpOverlapped: LPOVERLAPPED,
+  lpCompletionRoutine: LPOVERLAPPED_COMPLETION_ROUTINE
+): WINBOOL {.libKernel32, importc: "ReadDirectoryChangesW".}
