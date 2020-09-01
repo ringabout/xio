@@ -1,11 +1,11 @@
 import ../src/xio/iokit/iocp
-import ../src/xio/iokit/iocp/wsadata
-import ../src/xio/iokit/iocp/winsock2
-import ../src/xio/iokit/iocp/base/ws2types
-import ../src/xio/iokit/iocp/base/bsdtypes
-import ../src/xio/iokit/iocp/base/ws2tcpip
-import ../src/xio/iokit/iocp/base/ws2def
-import ../src/xio/iokit/iocp/base/sockettypes
+import ../src/xio/iokit/windows/wsadata
+import ../src/xio/iokit/windows/winsock2
+import ../src/xio/iokit/windows/base/ws2types
+import ../src/xio/iokit/windows/base/bsdtypes
+import ../src/xio/iokit/windows/base/ws2tcpip
+import ../src/xio/iokit/windows/base/ws2def
+import ../src/xio/iokit/windows/base/sockettypes
 
 
 

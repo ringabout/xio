@@ -1,8 +1,8 @@
 {.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}
 
 
-import iocp / [winsock2]
-import iocp / base / [ntdef, basetypes, minwindef, handleapi, minwinbase]
+import winsock2
+import base / [ntdef, basetypes, minwindef, handleapi, minwinbase]
 
 export handleapi, ntdef, minwindef, basetypes, minwinbase
 

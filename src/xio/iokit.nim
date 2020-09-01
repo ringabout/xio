@@ -1,4 +1,6 @@
 when defined(windows):
-  import iokit/iocp
+  import iokit/windows/iocp
+  export iocp
 else:
-  import iokit/io_uring
+  import iokit/linux/io_uring
+  export io_uring

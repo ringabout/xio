@@ -1,7 +1,7 @@
-import iocp/base/[fileapi, winbase, widestr2]
+import windows/base/[fileapi, winbase, widestr2]
 
 
-var name = newWideCString("iocp")
+var name = newWideCString("windows")
 # echo name
 
 
@@ -27,13 +27,13 @@ while true:
             FILE_NOTIFY_CHANGE_DIR_NAME or 
             FILE_NOTIFY_CHANGE_LAST_WRITE, reads, addr over, nil)
 
-  var buf = cast[pointer](addr buffer[0])
-  echo cast[cstring](buf).repr
+  var buf = cast[pointer](buffer.cstring)
+
   while true:
     let info = cast[PFILE_NOTIFY_INFORMATION](buf)
 
     echo info == nil
-    echo (info.NextEntryOffset, info.Action, info.FileNameLength, info.FileName.repr)
+    echo (info.NextEntryOffset, info.Action, info.FileNameLength, info.FileName)
 
     # var filename = newWideCString("".cstring, info.FileNameLength.int div 2)
     # for i in 0 ..< info.FileNameLength div 2:
