@@ -33,3 +33,11 @@ proc createFileA*(
   dwFlagsAndAttributes: DWORD,
   hTemplateFile: Handle
 ): Handle {.libKernel32, importc: "CreateFileA".}
+
+proc getFileAttributesA*(
+  lpFileName: LPCSTR
+): DWORD {.libKernel32, importc: "GetFileAttributesA".} 
+
+proc getFileAttributesW*(
+  lpFileName: LPCWSTR
+): DWORD {.libKernel32, importc: "GetFileAttributesW".} 

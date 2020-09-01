@@ -1,3 +1,5 @@
+import ntdef
+
 type
   BYTE* = cuchar
   WORD* = cushort
@@ -23,3 +25,5 @@ type
   PSZ* = cstring
 
   WINBOOL* = int32 ## if WINBOOL != 0, it succeeds which is different from posix.
+
+  LPHandle* = ptr Handle

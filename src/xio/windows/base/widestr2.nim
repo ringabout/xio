@@ -22,7 +22,7 @@ const
 
 template ones(n: untyped): untyped = ((1 shl n)-1)
 
-proc `$`*(w: UncheckedArray[Utf16Char], estimate: int, replacement: int = 0xFFFD): string =
+proc toString*(w: UncheckedArray[Utf16Char], estimate: int, replacement: int = 0xFFFD): string =
   result = newStringOfCap(estimate + estimate shr 2)
 
   var i = 0
@@ -64,5 +64,5 @@ proc `$`*(w: UncheckedArray[Utf16Char], estimate: int, replacement: int = 0xFFFD
       result.add chr(0xFFFD shr 6 and ones(6) or 0b10_0000_00)
       result.add chr(0xFFFD and ones(6) or 0b10_0000_00)
 
-proc `$`*(s: UncheckedArray[Utf16Char]): string =
-  result = s $ 80
+proc toString*(s: UncheckedArray[Utf16Char]): string =
+  result = toString(s, 80)

@@ -46,9 +46,6 @@ proc getQueuedCompletionStatusEx*(
 ): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatusEx".}
   ## Gets multiple completion port entries simultaneously.
 
-proc closeHandle*(hObject: Handle): WINBOOL {.libKernel32,
-    importc: "CloseHandle".}
-
 proc getLastError*(): DWORD {.libKernel32, importc: "GetLastError".}
 
 proc setLastError*(dwErrCode: DWORD) {.libKernel32, importc: "SetLastError".}
