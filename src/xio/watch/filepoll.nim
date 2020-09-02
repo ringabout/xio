@@ -1,56 +1,41 @@
 import timerwheel
-import os, times
-import windows/base/fileapi
-
-
-when defined(posix):
-  import posix
+import base
+import times, os
 
 
 type
-  FileEventAction* {.pure.} = enum
-    NonAction
-    CreateFile, ModifyFile, RenameFile, RemoveFile
-    CreateDir, RemoveDir
-
   FileEvent* = tuple
     name: string
     action: FileEventAction
 
   FileEventData* = object
-    name*: string
-    exists*: bool
-    lastModificationTime*: Time
-    uniqueId*: uint64
-    event*: FileEvent
+    name: string
+    exists: bool
+    lastModificationTime: Time
+    uniqueId: uint64
+    event: FileEvent
+
+
+proc isEmpty*(data: FileEventData): bool =
+  result = data.event.action == FileEventAction.NonAction
+
+proc getEvent*(data: FileEventData): FileEvent =
+  result = data.event
 
 proc clearEvent*(data: ptr FileEventData) =
   data.event = ("", FileEventAction.NonAction)
 
-proc getFileId(name: string): uint =
-  var x = newWideCString(name)
-  result = uint getFileAttributesW(addr x)
-
-proc getUniqueFileId*(name: string): uint64 =
-  when defined(windows):
-    let 
-      tid = getCreationTime(name)
-      id = getFileId(name)
-    result = uint64(toWinTime(tid)) xor id
-  elif defined(posix):
-    var s: Stat
-    if stat(name, s) == 0:
-      result = uint64(s.st_dev or s.st_ino shl 32)
-
 proc init(data: var FileEventData) =
   data.exists = true
+  data.name = expandFilename(data.name)
   data.uniqueId = getUniqueFileId(data.name)
   data.lastModificationTime = getLastModificationTime(data.name)
 
-proc init(data: ptr FileEventData, name: string) =
+proc init(data: ptr FileEventData) =
   data.exists = true
-  data.uniqueId = getUniqueFileId(name)
-  data.lastModificationTime = getLastModificationTime(name)
+  data.name = expandFilename(data.name)
+  data.uniqueId = getUniqueFileId(data.name)
+  data.lastModificationTime = getLastModificationTime(data.name)
 
 proc initFileEventData*(name: string): FileEventData =
   result.name = name
@@ -81,20 +66,20 @@ proc filecb*(args: pointer = nil) =
             data.event = ("", FileEventAction.RenameFile)
     else:
       if fileExists(data.name):
-        init(data, data.name)
+        init(data)
 
 
-var t = initTimer(100)
-var data = initFileEventData("watch.nim")
-echo cast[pointer](data.addr).repr
-var event0 = initTimerEvent(filecb, cast[pointer](addr data))
+when isMainModule:
+  var t = initTimer(100)
+  var data = initFileEventData("watch.nim")
+  echo cast[pointer](data.addr).repr
+  var event0 = initTimerEvent(filecb, cast[pointer](addr data))
 
-
-echo data
-# One shot
-discard t.add(event0, 10, -1)
-
-while true:
-  sleep(2000)
-  discard process(t)
   echo data
+  # One shot
+  discard t.add(event0, 10, -1)
+
+  while true:
+    sleep(2000)
+    discard process(t)
+    echo data

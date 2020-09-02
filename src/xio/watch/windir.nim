@@ -1,29 +1,32 @@
-import windows/base/[fileapi, handleapi, winbase, ioapiset, widestr2]
-import timerwheel, times, os
+import ../windows/base/[fileapi, handleapi, winbase, ioapiset]
+import timerwheel, os
+import base
 
 
 type
-  FileEventAction* {.pure.} = enum
-    CreateFile, ModifyFile, RenameFile, RemoveFile
-    CreateDir, RemoveDir
-
   FileEvent* = tuple
     name: string
     action: FileEventAction
     newName: string
 
   DirEventData* = object
-    name*: string
-    handle*: Handle
-    exists*: bool
-    event*: seq[FileEvent]
-    buffer*: string
-    reads*: DWORD
-    over*: OVERLAPPED
+    name: string
+    handle: Handle
+    exists: bool
+    event: seq[FileEvent]
+    buffer: string
+    reads: DWORD
+    over: OVERLAPPED
 
 
 proc initFileEvent*(name: string, action: FileEventAction, newName = ""): FileEvent =
   (name, action, newName)
+
+proc isEmpty*(data: DirEventData): bool =
+  result = data.event.len == 0
+
+proc getEvent*(data: DirEventData): seq[FileEvent] =
+  result = data.event
 
 proc clearEvent*(data: ptr DirEventData) =
   # data.buffer = newString(data.buffer.len)
@@ -43,23 +46,9 @@ proc startQueue*(data: var DirEventData) =
               FILE_NOTIFY_CHANGE_DIR_NAME or 
               FILE_NOTIFY_CHANGE_LAST_WRITE, data.reads, addr data.over, nil)
 
-proc getFileId(name: string): uint =
-  var x = newWideCString(name)
-  result = uint getFileAttributesW(addr x)
-
-proc getUniqueFileId*(name: string): uint64 =
-  when defined(windows):
-    let 
-      tid = getCreationTime(name)
-      id = getFileId(name)
-    result = uint64(toWinTime(tid)) xor id
-  elif defined(posix):
-    var s: Stat
-    if stat(name, s) == 0:
-      result = uint64(s.st_dev or s.st_ino shl 32)
-
 proc init(data: var DirEventData) =
   let name = newWideCString(data.name)
+  data.name = expandFilename(data.name)
   data.exists = true
   data.buffer = newString(1024)
   data.handle = createFileW(name, FILE_LIST_DIRECTORY, FILE_SHARE_DELETE or FILE_SHARE_READ or FILE_SHARE_WRITE, nil,
@@ -68,6 +57,7 @@ proc init(data: var DirEventData) =
 
 proc init(data: ptr DirEventData) =
   let name = newWideCString(data.name)
+  data.name = expandFilename(data.name)
   data.exists = true
   data.buffer = newString(1024)
   data.handle = createFileW(name, FILE_LIST_DIRECTORY, FILE_SHARE_DELETE or FILE_SHARE_READ or FILE_SHARE_WRITE, nil,
@@ -75,13 +65,10 @@ proc init(data: ptr DirEventData) =
   startQueue(data)
 
 proc initDirEventData*(name: string): DirEventData =
-  result.name = expandFilename(name)
+  result.name = name
 
   if dirExists(name):
     init(result)
-
-proc listenDir*(name: string) =
-  discard
 
 proc dircb*(args: pointer = nil) =
   if args != nil:
@@ -110,19 +97,6 @@ proc dircb*(args: pointer = nil) =
                 tmp[idx] = info.FileName[idx]
 
               let name = $tmp
-              # echo toString(info.FileName)
-              # let name = toString(info.FileName).substr(0, info.FileNameLength.int div 2)
-
-              echo "-------------------------------------"
-              echo data.buffer
-              echo data.buffer.len
-              var x = newString(data.reads)
-              echo x.len
-              copyMem(x.cstring, buf, data.reads)
-              echo x
-              echo (name, info.FileNameLength, info.Action, info.NextEntryOffset)
-              echo "-------------------------------------"
-
 
               case info.Action
               of FILE_ACTION_ADDED:
@@ -155,17 +129,17 @@ proc dircb*(args: pointer = nil) =
         data.event = @[initFileEvent("", FileEventAction.CreateDir)]
 
 
-var t = initTimer(1)
-var data = initDirEventData("d://qqpcmgr/desktop/test")
-var event0 = initTimerEvent(dircb, cast[pointer](addr data))
+when isMainModule:
+  var t = initTimer(1)
+  var data = initDirEventData("d://qqpcmgr/desktop/test")
+  var event0 = initTimerEvent(dircb, cast[pointer](addr data))
 
 
-discard t.add(event0, 1000, -1)
+  discard t.add(event0, 1000, -1)
 
-while true:
-  sleep(2000)
-  discard process(t)
-  echo (data.name, data.handle, data.exists, data.event)
+  while true:
+    sleep(2000)
+    discard process(t)
 
 
-discard data.handle.closeHandle()
+  discard data.handle.closeHandle()
