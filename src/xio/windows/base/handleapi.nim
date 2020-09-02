@@ -6,12 +6,12 @@ import ntdef, minwindef
 const
   INVALID_HANDLE_VALUE* = cast[Handle](-1)
 
-proc closeHandle*(hObject: HANDLE): WINBOOL {.libKernel32, importc: "CloseHandle"}
+proc closeHandle*(hObject: Handle): WINBOOL {.libKernel32, importc: "CloseHandle"}
 
 proc duplicateHandle*(
-  hSourceProcessHandle: HANDLE,
-  hSourceHandle: HANDLE,
-  hTargetProcessHandle: HANDLE,
+  hSourceProcessHandle: Handle,
+  hSourceHandle: Handle,
+  hTargetProcessHandle: Handle,
   lpTargetHandle: LPHANDLE,
   dwDesiredAccess: DWORD,
   bInheritHandle: WINBOOL,
@@ -19,14 +19,14 @@ proc duplicateHandle*(
 ): WINBOOL {.libKernel32, importc: "DuplicateHandle"}
 
 proc compareObjectHandles*(
-  hFirstObjectHandle: HANDLE; 
-  hSecondObjectHandle: HANDLE
+  hFirstObjectHandle: Handle; 
+  hSecondObjectHandle: Handle
 ): WINBOOL {.libKernel32, importc: "CompareObjectHandles"}
 
 proc getHandleInformation*(
-  hObject: HANDLE; lpdwFlags: LPDWORD
+  hObject: Handle; lpdwFlags: LPDWORD
 ): WINBOOL {.libKernel32, importc: "GetHandleInformation"}
 
 proc setHandleInformation*(
-  hObject: HANDLE; dwMask: DWORD; dwFlags: DWORD
+  hObject: Handle; dwMask: DWORD; dwFlags: DWORD
 ): WINBOOL {.libKernel32, importc: "SetHandleInformation"}
