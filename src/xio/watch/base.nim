@@ -16,9 +16,7 @@ type
     action: FileEventAction
     newName: string
 
-  FileEventCallback* = proc (event: PathEvent) {.gcsafe.}
-
-  DirEventCallback* = proc (event: seq[PathEvent]) {.gcsafe.}
+  EventCallback* = proc (event: seq[PathEvent]) {.gcsafe.}
 
 proc initDirEvent*(name: string, action: FileEventAction, newName = ""): PathEvent =
   (name, action, newName)

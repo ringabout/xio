@@ -67,10 +67,10 @@ proc inotify_init1*(flags: cint): FileHandle {.cdecl, importc: "inotify_init1",
     header: "<sys/inotify.h>".}
   ## Create and initialize inotify instance.
 
-proc inotify_add_watch*(fd: cint; name: cstring; mask: uint32): cint {.cdecl,
+proc inotify_add_watch*(fd: cint, name: cstring, mask: uint32): cint {.cdecl,
     importc: "inotify_add_watch", header: "<sys/inotify.h>".}
   ## Add watch of object NAME to inotify instance FD. Notify about events specified by MASK.
 
-proc inotify_rm_watch*(fd: cint; wd: cint): cint {.cdecl,
+proc inotify_rm_watch*(fd: cint, wd: cint): cint {.cdecl,
     importc: "inotify_rm_watch", header: "<sys/inotify.h>".}
   ## Remove the watch specified by WD from the inotify instance FD.

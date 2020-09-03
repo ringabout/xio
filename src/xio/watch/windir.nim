@@ -13,7 +13,7 @@ type
     buffer: string
     reads: DWORD
     over: OVERLAPPED
-    cb: DirEventCallback
+    cb: EventCallback
     node: TimerEventNode
 
 
@@ -70,7 +70,7 @@ proc init(data: ptr DirEventData) =
                               OPEN_EXISTING, FILE_FLAG_OVERLAPPED or FILE_FLAG_BACKUP_SEMANTICS, nil)
   startQueue(data)
 
-proc initDirEventData*(name: string, cb: DirEventCallback = nil): DirEventData =
+proc initDirEventData*(name: string, cb: EventCallback = nil): DirEventData =
   result.name = name
   result.cb = cb
 

@@ -10,7 +10,7 @@ type
     lastModificationTime: Time
     uniqueId: uint64
     event: PathEvent
-    cb: FileEventCallback
+    cb: EventCallback
     node: TimerEventNode
 
 
@@ -23,8 +23,8 @@ proc `node=`*(data: var FileEventData, node: TimerEventNode) =
 proc isEmpty*(data: FileEventData): bool =
   result = data.event.action == FileEventAction.NonAction
 
-proc getEvent*(data: FileEventData): PathEvent =
-  result = data.event
+proc getEvent*(data: FileEventData): seq[PathEvent] =
+  result = @[data.event]
 
 iterator events*(data: FileEventData): PathEvent =
   yield data.event
@@ -34,7 +34,7 @@ proc setEvent*(data: ptr FileEventData, name: string, action: FileEventAction, n
 
 proc call*(data: ptr FileEventData) =
   if data.cb != nil:
-    data.cb(data.event)
+    data.cb(@[data.event])
 
 proc clearEvent*(data: ptr FileEventData) =
   data.event = ("", FileEventAction.NonAction, "")
@@ -51,7 +51,7 @@ proc init(data: ptr FileEventData) =
   data.uniqueId = getUniqueFileId(data.name)
   data.lastModificationTime = getLastModificationTime(data.name)
 
-proc initFileEventData*(name: string, cb: FileEventCallback = nil): FileEventData =
+proc initFileEventData*(name: string, cb: EventCallback = nil): FileEventData =
   result.name = name
   result.cb = cb
 
