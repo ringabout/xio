@@ -17,27 +17,27 @@ proc taskCounter*(watcher: Watcher): int =
 
 when false:
   proc isEmpty*(data: DirEventData): bool
-  proc getEvent*(data: DirEventData): seq[FileEvent]
+  iterator events*(data: DirEventData): PathEvent
+  proc close*(data: FileEventData)
 
   proc isEmpty*(data: FileEventData): bool
-  proc getEvent*(data: FileEventData): FileEvent
+  iterator events*(data: DirEventData): PathEvent
+  proc close*(data: DirEventData)
 
 proc initWatcher*(interval = 100): Watcher =
   result.timer = initTimer(interval)
 
-proc registerFile*(watcher: var Watcher, data: var FileEventData, ms = 10, repeatTimes = -1) =
+proc register*(watcher: var Watcher, data: var FileEventData, ms = 10, repeatTimes = -1) =
   var event = initTimerEvent(filecb, cast[pointer](addr data))
   data.node = watcher.timer.add(event, ms, repeatTimes)
 
-proc removeFile*(watcher: var Watcher, data: FileEventData) =
-  watcher.timer.cancel(data.node)
-
-proc registerDir*(watcher: var Watcher, data: var DirEventData, ms = 10, repeatTimes = -1) =
+proc register*(watcher: var Watcher, data: var DirEventData, ms = 10, repeatTimes = -1) =
   var event = initTimerEvent(dircb, cast[pointer](addr data))
   data.node = watcher.timer.add(event, ms, repeatTimes)
 
-proc removeDir*(watcher: var Watcher, data: DirEventData) =
+proc remove*(watcher: var Watcher, data: FileEventData | DirEventData) =
   watcher.timer.cancel(data.node)
+  data.close()
 
 proc poll*(watcher: var Watcher, ms = 100) =
   sleep(ms)
@@ -53,7 +53,7 @@ when isMainModule:
     let filename = "d://qqpcmgr/desktop/e.txt"
     var data = initFileEventData(filename, cb = hello)
     var watcher = initWatcher(1)
-    registerFile(watcher, data)
+    register(watcher, data)
 
     writeFile(filename, "123")
     poll(watcher, 10)
@@ -66,7 +66,7 @@ when isMainModule:
     doAssert watcher.taskCounter == 1
     doAssert count == 2
 
-    removeFile(watcher, data)
+    remove(watcher, data)
     poll(watcher, 10)
     doAssert watcher.taskCounter == 0
     doAssert count == 2
@@ -75,7 +75,7 @@ when isMainModule:
     let path = "d://qqpcmgr/desktop/test"
     var data = initDirEventData(path)
     var watcher = initWatcher(100)
-    registerDir(watcher, data)
+    register(watcher, data)
 
     while true:
       poll(watcher, 2000)

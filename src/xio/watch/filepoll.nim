@@ -28,6 +28,9 @@ proc isEmpty*(data: FileEventData): bool =
 proc getEvent*(data: FileEventData): PathEvent =
   result = data.event
 
+iterator events*(data: FileEventData): PathEvent =
+  yield data.event
+
 proc setEvent*(data: ptr FileEventData, name: string, action: FileEventAction, newName = "") =
   data.event = (name, action, newName)
 

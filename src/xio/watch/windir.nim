@@ -35,6 +35,10 @@ proc isEmpty*(data: DirEventData): bool =
 proc getEvent*(data: DirEventData): seq[PathEvent] =
   result = data.event
 
+iterator events*(data: DirEventData): PathEvent =
+  for event in data.event:
+    yield event
+
 proc clearEvent*(data: ptr DirEventData) =
   data.event = @[]
 
