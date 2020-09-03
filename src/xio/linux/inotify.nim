@@ -9,6 +9,8 @@
 
 # Get the platform-dependent flags.
 # Structure describing an inotify event.
+
+# FileHandle = cint [io]
 type
   InotifyEvent* {.pure, final, importc: "struct inotify_event",
                   header: "<sys/inotify.h>".} = object ## An Inotify event.

@@ -4,8 +4,6 @@ import timerwheel
 
 
 type
-  FileEventCallback* = proc (event: PathEvent) {.gcsafe.}
-
   FileEventData* = object
     name: string
     exists: bool

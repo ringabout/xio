@@ -5,8 +5,6 @@ import timerwheel
 
 
 type
-  DirEventCallback* = proc (event: seq[PathEvent]) {.gcsafe.}
-
   DirEventData* = object
     name: string
     handle: Handle
