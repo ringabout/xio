@@ -1,37 +1,41 @@
 import ../windows/base/[fileapi, handleapi, winbase, ioapiset]
-import timerwheel, os
+import os
 import base
+import timerwheel
 
 
 type
-  FileEvent* = tuple
-    name: string
-    action: FileEventAction
-    newName: string
+  DirEventCallback* = proc (event: seq[PathEvent]) {.gcsafe.}
 
   DirEventData* = object
     name: string
     handle: Handle
     exists: bool
-    event: seq[FileEvent]
+    event: seq[PathEvent]
     buffer: string
     reads: DWORD
     over: OVERLAPPED
+    cb: DirEventCallback
+    node: TimerEventNode
 
 
-proc initFileEvent*(name: string, action: FileEventAction, newName = ""): FileEvent =
-  (name, action, newName)
+proc `node`*(data: DirEventData): TimerEventNode =
+  data.node
+
+proc `node=`*(data: var DirEventData, node: TimerEventNode) =
+  data.node = node
+
+proc call*(data: ptr DirEventData) =
+  if data.cb != nil:
+    data.cb(data.event)
 
 proc isEmpty*(data: DirEventData): bool =
   result = data.event.len == 0
 
-proc getEvent*(data: DirEventData): seq[FileEvent] =
+proc getEvent*(data: DirEventData): seq[PathEvent] =
   result = data.event
 
 proc clearEvent*(data: ptr DirEventData) =
-  # data.buffer = newString(data.buffer.len)
-  # data.over = OVERLAPPED()
-  # data.reads = 0
   data.event = @[]
 
 proc startQueue*(data: ptr DirEventData) =
@@ -64,11 +68,15 @@ proc init(data: ptr DirEventData) =
                               OPEN_EXISTING, FILE_FLAG_OVERLAPPED or FILE_FLAG_BACKUP_SEMANTICS, nil)
   startQueue(data)
 
-proc initDirEventData*(name: string): DirEventData =
+proc initDirEventData*(name: string, cb: DirEventCallback = nil): DirEventData =
   result.name = name
+  result.cb = cb
 
   if dirExists(name):
     init(result)
+
+proc close*(data: DirEventData) =
+  discard data.handle.closeHandle()
 
 proc dircb*(args: pointer = nil) =
   if args != nil:
@@ -92,6 +100,9 @@ proc dircb*(args: pointer = nil) =
             while true:
               let info = cast[PFILE_NOTIFY_INFORMATION](cast[ByteAddress](buf) + next)
 
+              if info == nil:
+                break
+
               var tmp = newWideCString("", info.FileNameLength.int div 2)
               for idx in 0 ..< info.FileNameLength.int div 2:
                 tmp[idx] = info.FileName[idx]
@@ -100,36 +111,42 @@ proc dircb*(args: pointer = nil) =
 
               case info.Action
               of FILE_ACTION_ADDED:
-                data.event.add(initFileEvent(name, FileEventAction.CreateFile))
+                data.event.add(initDirEvent(name, FileEventAction.CreateFile))
               of FILE_ACTION_REMOVED:
-                data.event.add(initFileEvent(name,FileEventAction.RemoveFile))
+                data.event.add(initDirEvent(name,FileEventAction.RemoveFile))
               of FILE_ACTION_MODIFIED:
-                data.event.add(initFileEvent(name, FileEventAction.ModifyFile))
+                data.event.add(initDirEvent(name, FileEventAction.ModifyFile))
               of FILE_ACTION_RENAMED_OLD_NAME:
                 oldName = name
               of FILE_ACTION_RENAMED_NEW_NAME:
-                data.event.add(initFileEvent(oldName, FileEventAction.RenameFile, name))
+                data.event.add(initDirEvent(oldName, FileEventAction.RenameFile, name))
               else:
                 discard
-              
+
               if info.NextEntryOffset == 0:
                 break
 
               inc(next, info.NextEntryOffset.int)
 
             startQueue(data)
-          
+            call(data)
       else:
         data.exists = false
         data.handle = nil
-        data.event = @[initFileEvent("", FileEventAction.RemoveDir)]
+        data.event = @[initDirEvent("", FileEventAction.RemoveDir)]
+        call(data)
+
     else:
       if dirExists(data.name):
         init(data)
-        data.event = @[initFileEvent("", FileEventAction.CreateDir)]
+        data.event = @[initDirEvent("", FileEventAction.CreateDir)]
+        call(data)
 
 
 when isMainModule:
+  import timerwheel
+
+
   var t = initTimer(1)
   var data = initDirEventData("d://qqpcmgr/desktop/test")
   var event0 = initTimerEvent(dircb, cast[pointer](addr data))
@@ -140,6 +157,5 @@ when isMainModule:
   while true:
     sleep(2000)
     discard process(t)
-
 
   discard data.handle.closeHandle()

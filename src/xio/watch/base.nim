@@ -11,6 +11,13 @@ type
     CreateFile, ModifyFile, RenameFile, RemoveFile
     CreateDir, RemoveDir
 
+  PathEvent* = tuple
+    name: string
+    action: FileEventAction
+    newName: string
+
+proc initDirEvent*(name: string, action: FileEventAction, newName = ""): PathEvent =
+  (name, action, newName)
 
 proc getFileId(name: string): uint =
   var x = newWideCString(name)

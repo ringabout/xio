@@ -1,29 +1,42 @@
-import timerwheel
 import base
 import times, os
+import timerwheel
 
 
 type
-  FileEvent* = tuple
-    name: string
-    action: FileEventAction
+  FileEventCallback* = proc (event: PathEvent) {.gcsafe.}
 
   FileEventData* = object
     name: string
     exists: bool
     lastModificationTime: Time
     uniqueId: uint64
-    event: FileEvent
+    event: PathEvent
+    cb: FileEventCallback
+    node: TimerEventNode
 
+
+proc `node`*(data: FileEventData): TimerEventNode =
+  data.node
+
+proc `node=`*(data: var FileEventData, node: TimerEventNode) =
+  data.node = node
 
 proc isEmpty*(data: FileEventData): bool =
   result = data.event.action == FileEventAction.NonAction
 
-proc getEvent*(data: FileEventData): FileEvent =
+proc getEvent*(data: FileEventData): PathEvent =
   result = data.event
 
+proc setEvent*(data: ptr FileEventData, name: string, action: FileEventAction, newName = "") =
+  data.event = (name, action, newName)
+
+proc call*(data: ptr FileEventData) =
+  if data.cb != nil:
+    data.cb(data.event)
+
 proc clearEvent*(data: ptr FileEventData) =
-  data.event = ("", FileEventAction.NonAction)
+  data.event = ("", FileEventAction.NonAction, "")
 
 proc init(data: var FileEventData) =
   data.exists = true
@@ -37,11 +50,15 @@ proc init(data: ptr FileEventData) =
   data.uniqueId = getUniqueFileId(data.name)
   data.lastModificationTime = getLastModificationTime(data.name)
 
-proc initFileEventData*(name: string): FileEventData =
+proc initFileEventData*(name: string, cb: FileEventCallback = nil): FileEventData =
   result.name = name
+  result.cb = cb
 
   if fileExists(name):
     init(result)
+
+proc close*(data: FileEventData) =
+  discard
 
 proc filecb*(args: pointer = nil) =
   if args != nil:
@@ -52,24 +69,33 @@ proc filecb*(args: pointer = nil) =
         let now = getLastModificationTime(data.name)
         if now != data.lastModificationTime:
           data.lastModificationTime = now
-          data.event = ("", FileEventAction.ModifyFile)
+          data.setEvent(data.name, FileEventAction.ModifyFile)
+          call(data)
       else:
         data.exists = false
-        data.event = ("", FileEventAction.RemoveFile)
+        data.setEvent(data.name, FileEventAction.RemoveFile)
 
         let dir = parentDir(data.name)
         for kind, name in walkDir(dir):
           if kind == pcFile and getUniqueFileId(name) == data.uniqueId:
             data.exists = true
+            data.lastModificationTime = getLastModificationTime(name)
+            data.setEvent(data.name, FileEventAction.RenameFile, name)
             data.name = name
-            data.lastModificationTime = getLastModificationTime(data.name)
-            data.event = ("", FileEventAction.RenameFile)
+            break
+
+        call(data)
     else:
       if fileExists(data.name):
         init(data)
+        data.setEvent(data.name, FileEventAction.CreateFile)
+        call(data)
 
 
 when isMainModule:
+  import timerwheel
+
+
   var t = initTimer(100)
   var data = initFileEventData("watch.nim")
   echo cast[pointer](data.addr).repr
