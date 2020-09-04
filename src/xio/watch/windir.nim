@@ -4,55 +4,19 @@ import base
 import timerwheel
 
 
-type
-  DirEventData* = object
-    name: string
-    handle: Handle
-    exists: bool
-    event: seq[PathEvent]
-    buffer: string
-    reads: DWORD
-    over: OVERLAPPED
-    cb: EventCallback
-    node: TimerEventNode
-
-
-proc `node`*(data: DirEventData): TimerEventNode =
-  data.node
-
-proc `node=`*(data: var DirEventData, node: TimerEventNode) =
-  data.node = node
-
-proc call*(data: ptr DirEventData) =
-  if data.cb != nil:
-    data.cb(data.event)
-
-proc isEmpty*(data: DirEventData): bool =
-  result = data.event.len == 0
-
-proc getEvent*(data: DirEventData): seq[PathEvent] =
-  result = data.event
-
-iterator events*(data: DirEventData): PathEvent =
-  for event in data.event:
-    yield event
-
-proc clearEvent*(data: ptr DirEventData) =
-  data.event = @[]
-
-proc startQueue*(data: ptr DirEventData) =
+proc startQueue*(data: ptr PathEventData) =
   discard readDirectoryChangesW(data.handle, data.buffer.cstring, 
               cast[DWORD](data.buffer.len), 0, FILE_NOTIFY_CHANGE_FILE_NAME or 
               FILE_NOTIFY_CHANGE_DIR_NAME or 
               FILE_NOTIFY_CHANGE_LAST_WRITE, data.reads, addr data.over, nil)
 
-proc startQueue*(data: var DirEventData) =
+proc startQueue*(data: var PathEventData) =
   discard readDirectoryChangesW(data.handle, data.buffer.cstring, 
               cast[DWORD](data.buffer.len), 0, FILE_NOTIFY_CHANGE_FILE_NAME or 
               FILE_NOTIFY_CHANGE_DIR_NAME or 
               FILE_NOTIFY_CHANGE_LAST_WRITE, data.reads, addr data.over, nil)
 
-proc init(data: var DirEventData) =
+proc init(data: var PathEventData) =
   let name = newWideCString(data.name)
   data.name = expandFilename(data.name)
   data.exists = true
@@ -61,7 +25,7 @@ proc init(data: var DirEventData) =
                               OPEN_EXISTING, FILE_FLAG_OVERLAPPED or FILE_FLAG_BACKUP_SEMANTICS, nil)
   startQueue(data)
 
-proc init(data: ptr DirEventData) =
+proc init(data: ptr PathEventData) =
   let name = newWideCString(data.name)
   data.name = expandFilename(data.name)
   data.exists = true
@@ -70,29 +34,27 @@ proc init(data: ptr DirEventData) =
                               OPEN_EXISTING, FILE_FLAG_OVERLAPPED or FILE_FLAG_BACKUP_SEMANTICS, nil)
   startQueue(data)
 
-proc initDirEventData*(name: string, cb: EventCallback = nil): DirEventData =
-  result.name = name
+proc initDirEventData*(name: string, cb: EventCallback): PathEventData =
+  result = PathEventData(kind: PathKind.Dir, name: name)
   result.cb = cb
 
   if dirExists(name):
     init(result)
 
-proc initDirEventData*(args: seq[tuple[name: string, cb: EventCallback]]): seq[DirEventData] =
-  result = newSeq[DirEventData](args.len)
-  for idx in 0 ..< args.len:
-    result[idx].name = args[idx].name
-    result[idx].cb = args[idx].cb
+# proc initDirEventData*(args: seq[tuple[name: string, cb: EventCallback]]): seq[DirEventData] =
+#   result = newSeq[DirEventData](args.len)
+#   for idx in 0 ..< args.len:
+#     result[idx].name = args[idx].name
+#     result[idx].cb = args[idx].cb
 
-    if dirExists(result[idx].name):
-      init(result[idx])
+#     if dirExists(result[idx].name):
+#       init(result[idx])
 
-proc close*(data: DirEventData) =
-  discard data.handle.closeHandle()
+
 
 proc dircb*(args: pointer = nil) =
   if args != nil:
-    var data = cast[ptr DirEventData](args)
-    data.clearEvent()
+    var data = cast[ptr PathEventData](args)
 
     if data.exists:
       if dirExists(data.name):
@@ -102,6 +64,7 @@ proc dircb*(args: pointer = nil) =
                               OPEN_EXISTING, FILE_FLAG_OVERLAPPED or FILE_FLAG_BACKUP_SEMANTICS, nil)
 
 
+        var event: seq[PathEvent]
         for _ in 0 ..< 2:
           if getOverlappedResult(data.handle, addr data.over, data.reads, 0) != 0:
             var buf = cast[pointer](data.buffer.substr(0, data.reads.int - 1).cstring)
@@ -122,15 +85,15 @@ proc dircb*(args: pointer = nil) =
 
               case info.Action
               of FILE_ACTION_ADDED:
-                data.event.add(initDirEvent(name, FileEventAction.Create))
+                event.add(initPathEvent(name, FileEventAction.Create))
               of FILE_ACTION_REMOVED:
-                data.event.add(initDirEvent(name,FileEventAction.Remove))
+                event.add(initPathEvent(name,FileEventAction.Remove))
               of FILE_ACTION_MODIFIED:
-                data.event.add(initDirEvent(name, FileEventAction.Modify))
+                event.add(initPathEvent(name, FileEventAction.Modify))
               of FILE_ACTION_RENAMED_OLD_NAME:
                 oldName = name
               of FILE_ACTION_RENAMED_NEW_NAME:
-                data.event.add(initDirEvent(oldName, FileEventAction.Rename, name))
+                event.add(initPathEvent(oldName, FileEventAction.Rename, name))
               else:
                 discard
 
@@ -140,26 +103,26 @@ proc dircb*(args: pointer = nil) =
               inc(next, info.NextEntryOffset.int)
 
             startQueue(data)
-            call(data)
+            call(data, event)
       else:
         data.exists = false
         data.handle = nil
-        data.event = @[initDirEvent("", FileEventAction.RemoveSelf)]
-        call(data)
+        call(data, @[initPathEvent("", FileEventAction.RemoveSelf)])
 
     else:
       if dirExists(data.name):
         init(data)
-        data.event = @[initDirEvent("", FileEventAction.CreateSelf)]
-        call(data)
+        call(data, @[initPathEvent("", FileEventAction.CreateSelf)])
 
 
 when isMainModule:
   import timerwheel
 
+  proc hello(event: seq[PathEvent]) =
+    echo event
 
   var t = initTimer(1)
-  var data = initDirEventData("d://qqpcmgr/desktop/test")
+  var data = initDirEventData("d://qqpcmgr/desktop/test", hello)
   var event0 = initTimerEvent(dircb, cast[pointer](addr data))
 
 
@@ -169,4 +132,4 @@ when isMainModule:
     sleep(2000)
     discard process(t)
 
-  discard data.handle.closeHandle()
+  close(data)
