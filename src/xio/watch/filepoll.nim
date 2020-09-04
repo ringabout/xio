@@ -58,6 +58,15 @@ proc initFileEventData*(name: string, cb: EventCallback = nil): FileEventData =
   if fileExists(name):
     init(result)
 
+proc initDirEventData*(args: seq[tuple[name: string, cb: EventCallback]]): seq[FileEventData] =
+  result = newSeq[FileEventData](args.len)
+  for idx in 0 ..< args.len:
+    result[idx].name = args[idx].name
+    result[idx].cb = args[idx].cb
+
+    if dirExists(result[idx].name):
+      init(result[idx])
+
 proc close*(data: FileEventData) =
   discard
 
@@ -70,18 +79,18 @@ proc filecb*(args: pointer = nil) =
         let now = getLastModificationTime(data.name)
         if now != data.lastModificationTime:
           data.lastModificationTime = now
-          data.setEvent(data.name, FileEventAction.ModifyFile)
+          data.setEvent(data.name, FileEventAction.Modify)
           call(data)
       else:
         data.exists = false
-        data.setEvent(data.name, FileEventAction.RemoveFile)
+        data.setEvent(data.name, FileEventAction.Remove)
 
         let dir = parentDir(data.name)
         for kind, name in walkDir(dir):
           if kind == pcFile and getUniqueFileId(name) == data.uniqueId:
             data.exists = true
             data.lastModificationTime = getLastModificationTime(name)
-            data.setEvent(data.name, FileEventAction.RenameFile, name)
+            data.setEvent(data.name, FileEventAction.Rename, name)
             data.name = name
             break
 
@@ -89,7 +98,7 @@ proc filecb*(args: pointer = nil) =
     else:
       if fileExists(data.name):
         init(data)
-        data.setEvent(data.name, FileEventAction.CreateFile)
+        data.setEvent(data.name, FileEventAction.Create)
         call(data)
 
 

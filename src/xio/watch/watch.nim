@@ -35,6 +35,16 @@ proc register*(watcher: var Watcher, data: var DirEventData, ms = 10, repeatTime
   var event = initTimerEvent(dircb, cast[pointer](addr data))
   data.node = watcher.timer.add(event, ms, repeatTimes)
 
+proc register*(watcher: var Watcher, dataList: var seq[FileEventData], ms = 10, repeatTimes = -1) =
+  for data in dataList.mitems:
+    var event = initTimerEvent(filecb, cast[pointer](addr data))
+    data.node = watcher.timer.add(event, ms, repeatTimes)
+
+proc register*(watcher: var Watcher, dataList: var seq[DirEventData], ms = 10, repeatTimes = -1) =
+  for data in dataList.mitems:
+    var event = initTimerEvent(dircb, cast[pointer](addr data))
+    data.node = watcher.timer.add(event, ms, repeatTimes)
+
 proc remove*(watcher: var Watcher, data: FileEventData | DirEventData) =
   watcher.timer.cancel(data.node)
   data.close()

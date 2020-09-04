@@ -77,6 +77,15 @@ proc initDirEventData*(name: string, cb: EventCallback = nil): DirEventData =
   if dirExists(name):
     init(result)
 
+proc initDirEventData*(args: seq[tuple[name: string, cb: EventCallback]]): seq[DirEventData] =
+  result = newSeq[DirEventData](args.len)
+  for idx in 0 ..< args.len:
+    result[idx].name = args[idx].name
+    result[idx].cb = args[idx].cb
+
+    if dirExists(result[idx].name):
+      init(result[idx])
+
 proc close*(data: DirEventData) =
   discard data.handle.closeHandle()
 
@@ -113,15 +122,15 @@ proc dircb*(args: pointer = nil) =
 
               case info.Action
               of FILE_ACTION_ADDED:
-                data.event.add(initDirEvent(name, FileEventAction.CreateFile))
+                data.event.add(initDirEvent(name, FileEventAction.Create))
               of FILE_ACTION_REMOVED:
-                data.event.add(initDirEvent(name,FileEventAction.RemoveFile))
+                data.event.add(initDirEvent(name,FileEventAction.Remove))
               of FILE_ACTION_MODIFIED:
-                data.event.add(initDirEvent(name, FileEventAction.ModifyFile))
+                data.event.add(initDirEvent(name, FileEventAction.Modify))
               of FILE_ACTION_RENAMED_OLD_NAME:
                 oldName = name
               of FILE_ACTION_RENAMED_NEW_NAME:
-                data.event.add(initDirEvent(oldName, FileEventAction.RenameFile, name))
+                data.event.add(initDirEvent(oldName, FileEventAction.Rename, name))
               else:
                 discard
 
@@ -135,13 +144,13 @@ proc dircb*(args: pointer = nil) =
       else:
         data.exists = false
         data.handle = nil
-        data.event = @[initDirEvent("", FileEventAction.RemoveDir)]
+        data.event = @[initDirEvent("", FileEventAction.RemoveSelf)]
         call(data)
 
     else:
       if dirExists(data.name):
         init(data)
-        data.event = @[initDirEvent("", FileEventAction.CreateDir)]
+        data.event = @[initDirEvent("", FileEventAction.CreateSelf)]
         call(data)
 
 

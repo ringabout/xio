@@ -8,8 +8,8 @@ when defined(posix):
 type
   FileEventAction* {.pure.} = enum
     NonAction
-    CreateFile, ModifyFile, RenameFile, RemoveFile
-    CreateDir, RemoveDir
+    Create, Modify, Rename, Remove
+    CreateSelf, RemoveSelf
 
   PathEvent* = tuple
     name: string
