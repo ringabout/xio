@@ -2,7 +2,7 @@
 
 version       = "0.1.0"
 author        = "Zeshen Xing"
-description   = "Experimental IO engine and event loop for Nim."
+description   = "Cross platform system API for os and net."
 license       = "Apache-2.0"
 srcDir        = "src"
 
