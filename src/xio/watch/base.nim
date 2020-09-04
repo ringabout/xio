@@ -1,12 +1,13 @@
 
-import os, times
 import timerwheel
 
 when defined(windows):
+  import os, times
   import ../windows/base/[fileapi, handleapi]
 
 elif defined(posix):
   import posix
+
 
 type
   FileEventAction* {.pure.} = enum
@@ -43,15 +44,44 @@ when defined(windows):
         reads*: DWORD
         over*: OVERLAPPED
 
+  proc close*(data: PathEventData) =
+    case data.kind
+    of PathKind.File:
+      discard
+    of PathKind.Dir:
+      discard data.handle.closeHandle()
+
+  proc getFileId(name: string): uint =
+    var x = newWideCString(name)
+    result = uint getFileAttributesW(addr x)
+
   proc `name=`*(data: var PathEventData, name: string) =
     data.name = name
 
   proc `cb=`*(data: var PathEventData, cb: EventCallback) =
     data.cb = cb
 
+
+elif defined(linux):
+  type
+    EventList* = object
+      name*: string
+      wd*: cint
+      cb*: EventCallback
+
+    PathEventData* = object
+      list*: seq[EventList]
+      handle*: FileHandle
+      node*: TimerEventNode
+      event*: seq[PathEvent]
+      buffer*: string
+
+
+
 proc call*(data: ptr PathEventData, event: seq[PathEvent]) =
-  if data.cb != nil:
-    data.cb(event)
+  for item in data.list:
+    if item.cb != nil:
+      item.cb(event)
 
 proc `node`*(data: PathEventData): TimerEventNode =
   data.node
@@ -59,19 +89,8 @@ proc `node`*(data: PathEventData): TimerEventNode =
 proc `node=`*(data: var PathEventData, node: TimerEventNode) =
   data.node = node
 
-proc close*(data: PathEventData) =
-  case data.kind
-  of PathKind.File:
-    discard
-  of PathKind.Dir:
-    discard data.handle.closeHandle()
-
 proc initPathEvent*(name: string, action: FileEventAction, newName = ""): PathEvent =
   (name, action, newName)
-
-proc getFileId(name: string): uint =
-  var x = newWideCString(name)
-  result = uint getFileAttributesW(addr x)
 
 proc getUniqueFileId*(name: string): uint64 =
   when defined(windows):

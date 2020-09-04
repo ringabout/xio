@@ -6,6 +6,9 @@ export base
 when defined(windows):
   import windir, filepoll
   export windir, filepoll
+elif defined(linux):
+  import linpath
+  export linpath
 
 
 type
