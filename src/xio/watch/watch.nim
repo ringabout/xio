@@ -51,6 +51,18 @@ proc poll*(watcher: var Watcher, ms = 100) =
   discard process(watcher.timer)
 
 
+when isMainModule:
+  block:
+    proc hello(event: seq[PathEvent]) =
+      echo "Hello: "
+      echo event
+
+    var watcher = initWatcher(1)
+    register(watcher, "test.nim", hello, ms = 100)
+
+    while true:
+      poll(watcher, 2000)
+
 # when isMainModule:
 #   block:
 #     var count = 0

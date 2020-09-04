@@ -68,21 +68,18 @@ elif defined(linux):
     EventList* = object
       name*: string
       wd*: cint
-      cb*: EventCallback
 
     PathEventData* = object
       list*: seq[EventList]
       handle*: FileHandle
       node*: TimerEventNode
-      event*: seq[PathEvent]
       buffer*: string
-
+      cb*: EventCallback
 
 
   proc call*(data: ptr PathEventData, event: seq[PathEvent]) =
-    for item in data.list:
-      if item.cb != nil:
-        item.cb(event)
+    if data.cb != nil:
+      data.cb(event)
 
 proc `node`*(data: PathEventData): TimerEventNode =
   data.node
