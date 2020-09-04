@@ -49,8 +49,6 @@ proc initDirEventData*(name: string, cb: EventCallback): PathEventData =
 #     if dirExists(result[idx].name):
 #       init(result[idx])
 
-
-
 proc dircb*(args: pointer = nil) =
   if args != nil:
     var data = cast[ptr PathEventData](args)
@@ -76,6 +74,7 @@ proc dircb*(args: pointer = nil) =
               if info == nil:
                 break
 
+              ## TODO reduce copy
               var tmp = newWideCString("", info.FileNameLength.int div 2)
               for idx in 0 ..< info.FileNameLength.int div 2:
                 tmp[idx] = info.FileName[idx]
