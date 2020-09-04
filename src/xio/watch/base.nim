@@ -22,12 +22,12 @@ type
 
   EventCallback* = proc (event: seq[PathEvent]) {.gcsafe.}
 
+  PathKind* {.pure.}  = enum
+    File, Dir
+
 
 when defined(windows):
   type
-    PathKind* {.pure.}  = enum
-      File, Dir
-
     PathEventData* = object
       name*: string
       exists*: bool
@@ -63,6 +63,7 @@ when defined(windows):
 
   proc call*(data: ptr PathEventData, event: seq[PathEvent]) =
     data.cb(event)
+
 elif defined(linux):
   type
     EventList* = object
@@ -70,11 +71,19 @@ elif defined(linux):
       wd*: cint
 
     PathEventData* = object
-      list*: seq[EventList]
       handle*: FileHandle
       node*: TimerEventNode
       buffer*: string
       cb*: EventCallback
+
+      case kind*: PathKind
+      of PathKind.File:
+        name*: string
+        wd*: cint
+        exists*: bool
+        uniqueId*: uint64
+      of PathKind.Dir:
+        list*: seq[EventList]
 
 
   proc call*(data: ptr PathEventData, event: seq[PathEvent]) =

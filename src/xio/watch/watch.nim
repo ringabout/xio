@@ -25,22 +25,34 @@ proc initWatcher*(interval = 100): Watcher =
 proc register*(watcher: var Watcher, path: string, cb: EventCallback, 
                ms = 10, repeatTimes = -1, treatAsFile = false) =
   let idx = watcher.path.len
-  if fileExists(path):
-    watcher.path.add(initFileEventData(path, cb))
-  elif dirExists(path):
-    watcher.path.add(initDirEventData(path, cb))
-  elif treatAsFile:
-    watcher.path.add(initFileEventData(path, cb))
-  else:
-    watcher.path.add(initDirEventData(path, cb))
 
-  var event = initTimerEvent(filecb, cast[pointer](addr watcher.path[idx]))
-  watcher.path[idx].node = watcher.timer.add(event, ms, repeatTimes)
+  let pathData =
+    if fileExists(path):
+      initFileEventData(path, cb)
+    elif dirExists(path):
+      initDirEventData(path, cb)
+    elif treatAsFile:
+      initFileEventData(path, cb)
+    else:
+      initDirEventData(path, cb)
 
-proc register*(watcher: var Watcher, dataList: seq[tuple[path: string, cb: EventCallback]], 
+  watcher.path.add pathData
+
+  echo pathData.kind
+
+  case pathData.kind
+  of PathKind.File:
+    var event = initTimerEvent(filecb, cast[pointer](addr watcher.path[idx]))
+    watcher.path[idx].node = watcher.timer.add(event, ms, repeatTimes)
+  of PathKind.Dir:
+    var event = initTimerEvent(dircb, cast[pointer](addr watcher.path[idx]))
+    watcher.path[idx].node = watcher.timer.add(event, ms, repeatTimes)
+
+proc register*(watcher: var Watcher, pathList: seq[string], cb: EventCallback, 
                ms = 10, repeatTimes = -1, treatAsFile = false) =
-  for data in dataList:
-    watcher.register(data.path, data.cb, ms, repeatTimes, treatAsFile)
+  for path in pathList:
+    watcher.register(path, cb, ms, repeatTimes, treatAsFile)
+
 
 # proc remove*(watcher: var Watcher, data: PathEventData) =
 #   watcher.timer.cancel(data.node)
