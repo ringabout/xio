@@ -61,7 +61,8 @@ when defined(windows):
   proc `cb=`*(data: var PathEventData, cb: EventCallback) =
     data.cb = cb
 
-
+  proc call*(data: ptr PathEventData, event: seq[PathEvent]) =
+    data.cb(event)
 elif defined(linux):
   type
     EventList* = object
@@ -78,10 +79,10 @@ elif defined(linux):
 
 
 
-proc call*(data: ptr PathEventData, event: seq[PathEvent]) =
-  for item in data.list:
-    if item.cb != nil:
-      item.cb(event)
+  proc call*(data: ptr PathEventData, event: seq[PathEvent]) =
+    for item in data.list:
+      if item.cb != nil:
+        item.cb(event)
 
 proc `node`*(data: PathEventData): TimerEventNode =
   data.node

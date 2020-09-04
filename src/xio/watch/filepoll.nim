@@ -1,7 +1,5 @@
 import base
 import times, os
-import timerwheel
-
 
 
 proc init(data: var PathEventData) =

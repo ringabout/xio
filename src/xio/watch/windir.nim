@@ -1,7 +1,6 @@
-import ../windows/base/[fileapi, handleapi, winbase, ioapiset]
+import ../windows/base/[fileapi, winbase, ioapiset]
 import os
 import base
-import timerwheel
 
 
 proc startQueue*(data: ptr PathEventData) =
