@@ -84,6 +84,8 @@ elif defined(linux):
         uniqueId*: uint64
       of PathKind.Dir:
         list*: seq[EventList]
+        fromName*: string
+        cookie*: uint32
 
 
   proc call*(data: ptr PathEventData, event: seq[PathEvent]) =

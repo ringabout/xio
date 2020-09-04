@@ -39,6 +39,7 @@ proc initDirEventData*(name: string, cb: EventCallback): PathEventData =
     event.wd = inotify_add_watch(result.handle, name.cstring, IN_ALL_EVENTS)
     result.list.add event
 
+
 proc filecb*(args: pointer = nil) =
   if args != nil:
     var data = cast[ptr PathEventData](args)
@@ -63,10 +64,6 @@ proc filecb*(args: pointer = nil) =
               events.add((data.name, FileEventAction.Modify, ""))
             elif (event.mask and IN_DELETE_SELF) != 0:
               events.add((data.name, FileEventAction.Remove, ""))
-            elif (event.mask and IN_CREATE) != 0:
-              events.add((data.name, FileEventAction.Create, ""))
-            elif (event.mask and IN_DELETE) != 0:
-              events.add((name, FileEventAction.Remove, ""))
 
             inc(pos, sizeof(InotifyEvent) + event.len.int)
 
@@ -93,16 +90,21 @@ proc dircb*(args: pointer = nil) =
   if args != nil:
     var data = cast[ptr PathEventData](args)
 
-    let size = posix.read(data.handle, data.buffer.cstring, data.buffer.len)
-    
-    if size > 0:
+    while true:
+      let size = posix.read(data.handle, data.buffer.cstring, data.buffer.len)
+      
+      if size <= 0:
+        break
+
       var buf = cast[pointer](data.buffer.cstring)
-      var cookie: uint32
-      var fromName: string
       var events: seq[PathEvent]
       var pos = 0
 
+      var times = 0
+
+
       while pos < size:
+        inc times
         let event = cast[ptr InotifyEvent](cast[ByteAddress](buf) + pos)
         var name: string
         if event.len != 0:
@@ -117,17 +119,16 @@ proc dircb*(args: pointer = nil) =
         elif (event.mask and IN_CREATE) != 0:
           events.add((name, FileEventAction.Create, ""))
         elif (event.mask and IN_MOVED_FROM) != 0:
-          fromName = name
-          cookie = event.cookie
+          data.fromName = name
+          data.cookie = event.cookie
         elif (event.mask and IN_MOVED_TO) != 0:
-          if cookie == event.cookie:
-            events.add((fromName, FileEventAction.Rename, name))
-          else:
-            events.add((name, FileEventAction.Remove, ""))
+          if data.cookie == event.cookie:
+            events.add((data.fromName, FileEventAction.Rename, name))
         elif (event.mask and IN_DELETE) != 0:
           events.add((name, FileEventAction.Remove, ""))
 
         inc(pos, sizeof(InotifyEvent) + event.len.int)
+
 
       if events.len != 0:
         call(data, events)

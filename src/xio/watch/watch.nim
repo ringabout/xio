@@ -70,7 +70,7 @@ when isMainModule:
       echo event
 
     var watcher = initWatcher(1)
-    register(watcher, "test.nim", hello, ms = 100)
+    register(watcher, "/root/play", hello, ms = 100)
 
     while true:
       poll(watcher, 2000)
