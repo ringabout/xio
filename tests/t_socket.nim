@@ -7,7 +7,6 @@ if WSAStartup(0x0101, addr wsa) != 0:
 
 block:
   let x = getprotobyname("tcp")
-  echo x.p_aliases.cstringArrayToSeq
   if x != nil:
     doAssert x.p_proto == 6
 

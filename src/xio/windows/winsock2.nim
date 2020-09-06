@@ -190,6 +190,10 @@ proc getprotobyname*(
   name: cstring
 ): ptr Protoent {.libWs2_32, importc: "getprotobyname"}
 
+proc getprotobynumber*(
+  proto: cint
+): ptr Protoent {.libWs2_32, importc: "getprotobynumber"}
+
 proc listen*(s: SocketHandle, backlog: cint): cint {.libWs2_32, importc: "listen".}
 
 proc WSAConnect*(
