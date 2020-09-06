@@ -49,6 +49,14 @@ type
 
   LPQOS* = ptr QOS
 
+  PROTOENT* = object
+    p_name*: cstring
+    p_aliases*: cstringArray
+    p_proto*: cshort
+
+  PPROTOENT* = ptr PROTOENT
+  LPPROTOENT* = ptr PPROTOENT
+
 
 const
   WSA_IO_PENDING* = 997'i32
@@ -177,6 +185,10 @@ proc inet_addr*(cp: cstring): culong {.libWs2_32, importc: "inet_addr".} =
     doAssert inet_addr("1.0.0.127") == 2130706433
 
 proc inet_ntoa*(inAddr: InAddr): cstring {.libWs2_32, importc: "inet_ntoa".}
+
+proc getprotobyname*(
+  name: cstring
+): ptr Protoent {.libWs2_32, importc: "getprotobyname"}
 
 proc listen*(s: SocketHandle, backlog: cint): cint {.libWs2_32, importc: "listen".}
 
