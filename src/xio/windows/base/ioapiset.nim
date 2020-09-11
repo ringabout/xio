@@ -1,5 +1,4 @@
-import ntdef, minwindef, minwinbase, basetypes
-
+import ntdef, minwindef, minwinbase, basetsd
 
 
 {.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}

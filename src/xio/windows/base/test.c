@@ -1,105 +1,152 @@
+#define SM_CXSCREEN 0
+#define SM_CYSCREEN 1
+#define SM_CXVSCROLL 2
+#define SM_CYHSCROLL 3
+#define SM_CYCAPTION 4
+#define SM_CXBORDER 5
+#define SM_CYBORDER 6
+#define SM_CXDLGFRAME 7
+#define SM_CYDLGFRAME 8
+#define SM_CYVTHUMB 9
+#define SM_CXHTHUMB 10
+#define SM_CXICON 11
+#define SM_CYICON 12
+#define SM_CXCURSOR 13
+#define SM_CYCURSOR 14
+#define SM_CYMENU 15
+#define SM_CXFULLSCREEN 16
+#define SM_CYFULLSCREEN 17
+#define SM_CYKANJIWINDOW 18
+#define SM_MOUSEPRESENT 19
+#define SM_CYVSCROLL 20
+#define SM_CXHSCROLL 21
+#define SM_DEBUG 22
+#define SM_SWAPBUTTON 23
+#define SM_RESERVED1 24
+#define SM_RESERVED2 25
+#define SM_RESERVED3 26
+#define SM_RESERVED4 27
+#define SM_CXMIN 28
+#define SM_CYMIN 29
+#define SM_CXSIZE 30
+#define SM_CYSIZE 31
+#define SM_CXFRAME 32
+#define SM_CYFRAME 33
+#define SM_CXMINTRACK 34
+#define SM_CYMINTRACK 35
+#define SM_CXDOUBLECLK 36
+#define SM_CYDOUBLECLK 37
+#define SM_CXICONSPACING 38
+#define SM_CYICONSPACING 39
+#define SM_MENUDROPALIGNMENT 40
+#define SM_PENWINDOWS 41
+#define SM_DBCSENABLED 42
+#define SM_CMOUSEBUTTONS 43
+
+#define SM_CXFIXEDFRAME SM_CXDLGFRAME
+#define SM_CYFIXEDFRAME SM_CYDLGFRAME
+#define SM_CXSIZEFRAME SM_CXFRAME
+#define SM_CYSIZEFRAME SM_CYFRAME
+
+#define SM_SECURE 44
+#define SM_CXEDGE 45
+#define SM_CYEDGE 46
+#define SM_CXMINSPACING 47
+#define SM_CYMINSPACING 48
+#define SM_CXSMICON 49
+#define SM_CYSMICON 50
+#define SM_CYSMCAPTION 51
+#define SM_CXSMSIZE 52
+#define SM_CYSMSIZE 53
+#define SM_CXMENUSIZE 54
+#define SM_CYMENUSIZE 55
+#define SM_ARRANGE 56
+#define SM_CXMINIMIZED 57
+#define SM_CYMINIMIZED 58
+#define SM_CXMAXTRACK 59
+#define SM_CYMAXTRACK 60
+#define SM_CXMAXIMIZED 61
+#define SM_CYMAXIMIZED 62
+#define SM_NETWORK 63
+#define SM_CLEANBOOT 67
+#define SM_CXDRAG 68
+#define SM_CYDRAG 69
+#define SM_SHOWSOUNDS 70
+#define SM_CXMENUCHECK 71
+#define SM_CYMENUCHECK 72
+#define SM_SLOWMACHINE 73
+#define SM_MIDEASTENABLED 74
+#define SM_MOUSEWHEELPRESENT 75
+#define SM_XVIRTUALSCREEN 76
+#define SM_YVIRTUALSCREEN 77
+#define SM_CXVIRTUALSCREEN 78
+#define SM_CYVIRTUALSCREEN 79
+#define SM_CMONITORS 80
+#define SM_SAMEDISPLAYFORMAT 81
+#define SM_IMMENABLED 82
+#define SM_CXFOCUSBORDER 83
+#define SM_CYFOCUSBORDER 84
+#define SM_TABLETPC 86
+#define SM_MEDIACENTER 87
+#define SM_STARTER 88
+#define SM_SERVERR2 89
+
+
+#define SM_DIGITIZER 94
+#define SM_MAXIMUMTOUCHES 95
+
+
+
+#define SM_CMETRICS 97
+
+
+#define SM_REMOTESESSION 0x1000
+#define SM_SHUTTINGDOWN 0x2000
+#define SM_REMOTECONTROL 0x2001
+#define SM_CARETBLINKINGENABLED 0x2002
+#define SM_CONVERTIBLESLATEMODE 0x2003
+#define SM_SYSTEMDOCKED 0x2004
 
 
 
 
-HANDLE
-CreateIoCompletionPort(
-     HANDLE FileHandle,
-     HANDLE ExistingCompletionPort,
-     ULONG_PTR CompletionKey,
-     DWORD NumberOfConcurrentThreads
-    );
 
+#define PMB_ACTIVE 0x00000001
 
+#define MNC_IGNORE 0
+#define MNC_CLOSE 1
+#define MNC_EXECUTE 2
+#define MNC_SELECT 3
 
-WINBOOL
-GetQueuedCompletionStatus(
-     HANDLE CompletionPort,
-     LPDWORD lpNumberOfBytesTransferred,
-     PULONG_PTR lpCompletionKey,
-     LPOVERLAPPED* lpOverlapped,
-     DWORD dwMilliseconds
-    );
+#define MNS_NOCHECK 0x80000000
+#define MNS_MODELESS 0x40000000
+#define MNS_DRAGDROP 0x20000000
+#define MNS_AUTODISMISS 0x10000000
+#define MNS_NOTIFYBYPOS 0x08000000
+#define MNS_CHECKORBMP 0x04000000
 
+#define MIM_MAXHEIGHT 0x00000001
+#define MIM_BACKGROUND 0x00000002
+#define MIM_HELPID 0x00000004
+#define MIM_MENUDATA 0x00000008
+#define MIM_STYLE 0x00000010
+#define MIM_APPLYTOSUBMENUS 0x80000000
 
+#define MND_CONTINUE 0
+#define MND_ENDMENU 1
 
-WINBOOL
-GetQueuedCompletionStatusEx(
-     HANDLE CompletionPort,
-     LPOVERLAPPED_ENTRY lpCompletionPortEntries,
-     ULONG ulCount,
-     PULONG ulNumEntriesRemoved,
-     DWORD dwMilliseconds,
-     WINBOOL fAlertable
-    );
+#define MNGOF_TOPGAP 0x00000001
+#define MNGOF_BOTTOMGAP 0x00000002
 
+#define MNGO_NOINTERFACE 0x00000000
+#define MNGO_NOERROR 0x00000001
 
-
-
-WINBOOL
-PostQueuedCompletionStatus(
-     HANDLE CompletionPort,
-     DWORD dwNumberOfBytesTransferred,
-     ULONG_PTR dwCompletionKey,
-     LPOVERLAPPED lpOverlapped
-    );
-
-
-
-
-WINBOOL
-DeviceIoControl(
-     HANDLE hDevice,
-     DWORD dwIoControlCode,
-    LPVOID lpInBuffer,
-     DWORD nInBufferSize,
-    LPVOID lpOutBuffer,
-     DWORD nOutBufferSize,
-     LPDWORD lpBytesReturned,
-     LPOVERLAPPED lpOverlapped
-    );
-
-
-
-WINBOOL
-GetOverlappedResult(
-     HANDLE hFile,
-     LPOVERLAPPED lpOverlapped,
-     LPDWORD lpNumberOfBytesTransferred,
-     WINBOOL bWait
-    );
-
-
-
-
-WINBOOL
-CancelIoEx(
-     HANDLE hFile,
-     LPOVERLAPPED lpOverlapped
-    );
-
-
-
-WINBOOL
-CancelIo(
-     HANDLE hFile
-    );
-
-
-
-WINBOOL
-GetOverlappedResultEx(
-     HANDLE hFile,
-     LPOVERLAPPED lpOverlapped,
-     LPDWORD lpNumberOfBytesTransferred,
-     DWORD dwMilliseconds,
-     WINBOOL bAlertable
-    );
-
-
-
-WINBOOL
-CancelSynchronousIo(
-     HANDLE hThread
-    );
-
+#define MIIM_STATE 0x00000001
+#define MIIM_ID 0x00000002
+#define MIIM_SUBMENU 0x00000004
+#define MIIM_CHECKMARKS 0x00000008
+#define MIIM_TYPE 0x00000010
+#define MIIM_DATA 0x00000020
+#define MIIM_STRING 0x00000040
+#define MIIM_BITMAP 0x00000080
+#define MIIM_FTYPE 0x00000100

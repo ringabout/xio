@@ -1,6 +1,6 @@
-import ntdef, minwindef, minwinbase
+import ntdef, minwindef, minwinbase, winnt
 
-export ntdef, minwindef, minwinbase
+export ntdef, minwindef, minwinbase, winnt
 
 
 {.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}
@@ -31,3 +31,14 @@ proc readDirectoryChangesW*(
   lpOverlapped: LPOVERLAPPED,
   lpCompletionRoutine: LPOVERLAPPED_COMPLETION_ROUTINE
 ): WINBOOL {.libKernel32, importc: "ReadDirectoryChangesW".}
+
+
+proc getComputerNameA*(
+  lpBuffer: LPSTR,
+  nSize: LPDWORD
+): WINBOOL {.importc: "GetComputerNameA", libKernel32.}
+
+proc getComputerNameW*(
+  lpBuffer: LPWSTR,
+  nSize: LPDWORD
+): WINBOOL {.importc: "GetComputerNameW", libKernel32.}

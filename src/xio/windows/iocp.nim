@@ -2,9 +2,9 @@
 
 
 import winsock2
-import base / [ntdef, basetypes, minwindef, handleapi, minwinbase]
+import base / [ntdef, minwindef, handleapi, minwinbase]
 
-export handleapi, ntdef, minwindef, basetypes, minwinbase
+export handleapi, ntdef, minwindef, minwinbase
 
 
 proc createIoCompletionPort*(
@@ -45,10 +45,6 @@ proc getQueuedCompletionStatusEx*(
   fAlertable: WINBOOL
 ): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatusEx".}
   ## Gets multiple completion port entries simultaneously.
-
-proc getLastError*(): DWORD {.libKernel32, importc: "GetLastError".}
-
-proc setLastError*(dwErrCode: DWORD) {.libKernel32, importc: "SetLastError".}
 
 
 when isMainModule:

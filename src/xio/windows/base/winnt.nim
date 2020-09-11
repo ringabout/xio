@@ -25,6 +25,7 @@ type
   LPUWSTR* = ptr WCHAR
   PUWSTR* = ptr WCHAR
   LPCWSTR* = ptr WCHAR
+  LPCTSTR* = LPCWSTR
   PCWSTR* = ptr WCHAR
   PZPCWSTR* = ptr PCWSTR
   PCZPCWSTR* = ptr PCWSTR

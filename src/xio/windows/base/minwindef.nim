@@ -1,4 +1,4 @@
-import ntdef
+import ntdef, basetsd
 
 type
   BYTE* = cuchar
@@ -27,3 +27,6 @@ type
   WINBOOL* = int32 ## if WINBOOL != 0, it succeeds which is different from posix.
 
   LPHandle* = ptr Handle
+
+  UINT* = cuint
+  WPARAM* = UINT_PTR

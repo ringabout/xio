@@ -1,4 +1,4 @@
-import basetypes
+import basetsd
 
 type
   SocketHandle* = UINT_PTR

@@ -1,4 +1,4 @@
-import ntdef, minwindef, basetypes
+import ntdef, minwindef, basetsd
 
 
 type
