@@ -8,7 +8,7 @@ type
   PINT32* = ptr INT32
   INT64* = int64
   PINT64* = ptr INT64
-  UINT8* = cuchar
+  UINT8* = uint8
   PUINT8* = ptr UINT8
   UINT16* = cushort
   PUINT16* = ptr UINT16

@@ -1,28 +1,25 @@
 {.pragma: libKernel32, stdcall, dynlib: "Kernel32.dll".}
 
-
-import winsock2
-import base / [ntdef, minwindef, handleapi, minwinbase]
+import base / [basetsd, ntdef, minwindef, handleapi, minwinbase]
 
 export handleapi, ntdef, minwindef, minwinbase
 
-
 proc createIoCompletionPort*(
-  fileHandle: Handle, 
+  fileHandle: Handle,
   existingCompletionPort: Handle,
-  completionKey: ULONG_PTR, 
+  completionKey: ULONG_PTR,
   numberOfConcurrentThreads: DWORD
-): Handle {.libKernel32, importc: "CreateIoCompletionPort"}
+): Handle {.libKernel32, importc: "CreateIoCompletionPort".}
   ## Creates an input/output (I/O) completion port and associates it with a specified file handle.
   ## Or creates an input/output (I/O) completion port which is not yet associated with file handles.
-  ## Params: 
+  ## Params:
   ##         - ``FileHandle``: An open file handle or INVALID_HANDLE_VALUE.
   ##         - ``ExistingCompletionPort``: A handle to an existing I/O completion port or NULL.
   ##         - ``CompletionKey``: User-defined completion key.
   ##         - ``NumberOfConcurrentThreads``
   ## Returns:
   ##         - ``Handle``
-  ## 
+  ##
   ## .. code-block:: Nim
   ##   # creates an input/output (I/O) completion port
   ##   discard createIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 1)
@@ -33,7 +30,7 @@ proc getQueuedCompletionStatus*(
   lpCompletionKey: var ULONG_PTR, # LPULONG_PTR
   lpOverlapped: LPOVERLAPPED, # LPOVERLAPPED
   dwMilliseconds: DWORD
-): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatus"}
+): WINBOOL {.libKernel32, importc: "GetQueuedCompletionStatus".}
   ## Gets one completion port entry.
 
 proc getQueuedCompletionStatusEx*(
