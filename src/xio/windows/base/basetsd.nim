@@ -1,4 +1,5 @@
 type
+  uchar* {.importc: "unsigned char", nodecl.} = uint8
   POINTER_64_INT* = uint
   INT8* = cschar
   PINT8* = ptr INT8
@@ -8,7 +9,7 @@ type
   PINT32* = ptr INT32
   INT64* = int64
   PINT64* = ptr INT64
-  UINT8* = cuchar
+  UINT8* = uchar
   PUINT8* = ptr UINT8
   UINT16* = cushort
   PUINT16* = ptr UINT16
