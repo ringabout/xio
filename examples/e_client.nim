@@ -1,12 +1,5 @@
-import ../src/xio/windows/iocp
-import ../src/xio/windows/wsadata
-import ../src/xio/windows/winsock2
-import ../src/xio/windows/base/ws2types
-import ../src/xio/windows/base/bsdtypes
-import ../src/xio/windows/base/ws2tcpip
-import ../src/xio/windows/base/ws2def
-import ../src/xio/windows/base/sockettypes
-
+import ../src/xio/windows/[wsadata, winsock2]
+import ../src/xio/windows/base/[ws2tcpip, ws2def, sockettypes]
 
 # proc getAddrInfo*(
 #   pNodeName: PCSTR,
@@ -25,10 +18,10 @@ block:
   proc main =
     var wsa: WSAData
 
-    if WSAStartup(0x0101, addr wsa) != 0: 
+    if WSAStartup(0x0101, addr wsa) != 0:
       doAssert false
 
-    let 
+    let
       address = "127.0.0.1"
       port = "5000"
 
@@ -44,7 +37,8 @@ block:
     echo getAddrInfo(address, port, addr hints, addr result)
     echo result.repr
 
-    var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
+    var connectSocket = socket(result.aiFamily, result.aiSocktype,
+        result.aiProtocol)
     echo connect(connectSocket, result.aiAddr, cast[cint](result.aiAddrlen))
 
     var s = "This is a test!\n"

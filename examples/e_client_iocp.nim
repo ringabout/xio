@@ -1,14 +1,7 @@
-import ../src/xio/windows/iocp
-import ../src/xio/windows/wsadata
-import ../src/xio/windows/winsock2
-import ../src/xio/windows/base/ws2types
-import ../src/xio/windows/base/bsdtypes
-import ../src/xio/windows/base/ws2tcpip
-import ../src/xio/windows/base/ws2def
-import ../src/xio/windows/base/sockettypes
+import ../src/xio/windows/[iocp, wsadata, winsock2]
+import ../src/xio/windows/base/[ws2tcpip, ws2def, basetsd]
 
 import os
-
 
 # proc getAddrInfo*(
 #   pNodeName: PCSTR,
@@ -32,10 +25,10 @@ block:
 
     var wsa: WSAData
 
-    if WSAStartup(0x0101, addr wsa) != 0: 
+    if WSAStartup(0x0101, addr wsa) != 0:
       doAssert false
 
-    let 
+    let
       address = "127.0.0.1"
       port = "5000"
 
@@ -48,10 +41,11 @@ block:
     hints.aiSocktype = 1
     hints.aiProtocol = 6
 
-    echo getAddrInfo(address, port, addr hints, addr result)
+    echo getAddrInfo(cstring(address), cstring(port), addr hints, addr result)
     echo result.repr
 
-    var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
+    var connectSocket = socket(result.aiFamily, result.aiSocktype,
+        result.aiProtocol)
     echo connect(connectSocket, result.aiAddr, cast[cint](result.aiAddrlen))
 
     # var s = "This is a test!\n"
@@ -66,7 +60,7 @@ block:
     var recvBuf = newString(16)
 
     var buffer: array[200, char]
-    var b = WSABUF(len: 200, buf: buffer.addr)
+    var b = WSABUF(len: 200, buf: cast[cstring](buffer.addr))
 
     var nums: culong
     var over: WSAOVERLAPPED
@@ -85,8 +79,8 @@ block:
 
     discard createIoCompletionPort(over.hevent, queue, 0, 1)
 
-    var data: DWORD
-    var key: ULONG_PTR
+    # var data: DWORD
+    # var key: ULONG_PTR
 
     # while true:
   # completionPort: Handle,
@@ -95,11 +89,11 @@ block:
   # lpOverlapped: var OVERLAPPED,
   # dwMilliseconds: DWORD
 
-      # getQueuedCompletionStatus(queue, data, key, over, 10)
+    # getQueuedCompletionStatus(queue, data, key, over, 10)
 
-    # let res = recv(connectSocket, recvBuf, recvBuf.len.cint, 0)
+  # let res = recv(connectSocket, recvBuf, recvBuf.len.cint, 0)
 
-    # echo WSAGetLastError()
+  # echo WSAGetLastError()
 
     echo res
     echo recvBuf

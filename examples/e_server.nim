@@ -1,20 +1,11 @@
-import ../src/xio/windows/iocp
-import ../src/xio/windows/wsadata
-import ../src/xio/windows/winsock2
-import ../src/xio/windows/base/ws2types
-import ../src/xio/windows/base/bsdtypes
-import ../src/xio/windows/base/ws2tcpip
-import ../src/xio/windows/base/ws2def
-import ../src/xio/windows/base/sockettypes
-
-
-
+import ../src/xio/windows/[wsadata, winsock2]
+import ../src/xio/windows/base/[ws2types, ws2tcpip, ws2def]
 
 block:
   proc main =
     var wsa: WSAData
 
-    if WSAStartup(0x0101, addr wsa) != 0: 
+    if WSAStartup(0x0101, addr wsa) != 0:
       doAssert false
 
     var
@@ -30,9 +21,10 @@ block:
     hints.aiSocktype = 1
     hints.aiProtocol = 6
 
-    echo getAddrInfo(address, port, addr hints, addr result)
+    echo getAddrInfo(cstring(address), cstring(port), addr hints, addr result)
 
-    var connectSocket = socket(result.aiFamily, result.aiSocktype, result.aiProtocol)
+    var connectSocket = socket(result.aiFamily, result.aiSocktype,
+        result.aiProtocol)
     discard bindAddr(connectSocket, result.aiAddr, cast[cint](result.aiAddrLen))
     discard listen(connectSocket, SOMAXCONN)
 
@@ -42,7 +34,7 @@ block:
       var addressLen = sizeof(address).cint
       var client = accept(connectSocket, addr address, addressLen)
       var text = "This is a test!\n"
-      doAssert client.send(text, text.len.cint, 0) == text.len
+      doAssert client.send(cstring(text), text.len.cint, 0) == text.len
 
     freeAddrInfo(result)
 
