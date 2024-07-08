@@ -1,7 +1,7 @@
 import ntdef, basetsd
 
 type
-  BYTE* = uint8
+  BYTE* = uchar
   WORD* = cushort
   DWORD* = culong
   FLOAT* = cfloat
@@ -20,7 +20,7 @@ type
 
   USHORT* = cushort
   PUSHORT* = ptr USHORT
-  UCHAR* = char
+  UCHAR* = uchar
   PUCHAR* = ptr UCHAR
   PSZ* = cstring
 

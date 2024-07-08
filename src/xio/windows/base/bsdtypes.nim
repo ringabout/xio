@@ -1,5 +1,7 @@
+import basetsd
+
 type
-  uuchar* = char
+  uuchar* = uchar
   uushort* = cushort
   uuint* = cuint
   uulong* = culong
